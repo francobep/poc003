@@ -4,20 +4,6 @@ import socket
 import json
 import requests
 
-base_url = 'https://127.0.0.1:55000'
-auth = requests.auth.HTTPBasicAuth('foo', 'bar')
-verify = False
-requests.packages.urllib3.disable_warnings()
-
-# Request
-url = '{0}{1}'.format(base_url, "/cluster/nodes")
-r = requests.get(url, auth=auth, params=None, verify=False)
-print(json.dumps(r.json(), indent=4, sort_keys=True))
-print("Status: {0}".format(r.status_code))
-exit(1)
-#Reemplazar utilizando la API de Wazuh/Kubernetes 
-WORKERS = ['192.168.23.123', '192.168.5.11']
-#WORKERS = ['192.168.23.123','192.168.0.28','192.168.29.89']
 
 
 def get_connections(host):
@@ -51,9 +37,26 @@ def shudown_session(host, connection):
         rbytes = s.recv(40960)
         s.close()
 
-def get_workers():
-    workers = WORKERS
-    return workers
+def get_master():
+    master = '127.0.0.1'
+    return master
+
+def get_workers_wazuh_api(master):
+    base_url = 'https://'+ master +':55000'
+    auth = requests.auth.HTTPBasicAuth('foo', 'bar')
+    verify = False
+    requests.packages.urllib3.disable_warnings()
+
+    # Request
+    url = '{0}{1}'.format(base_url, "/cluster/nodes")
+    r = requests.get(url, auth=auth, params=None, verify=False)
+    print(json.dumps(r.json(), indent=4, sort_keys=True))
+    print("Status: {0}".format(r.status_code))
+    for worker in r['data']['items']:
+        type = worker['type']
+        if  type == "worker":
+            print(worker['ip'])    
+    #return workers
 
 def balance_tcp():
     worker_with_conn = []
@@ -89,4 +92,6 @@ def balance_tcp():
                     i = i + 1
 
 if __name__ == "__main__":
-    balance_tcp()
+    #balance_tcp()
+    master = get_master()
+    workers = get_workers_wazuh_api(master)
