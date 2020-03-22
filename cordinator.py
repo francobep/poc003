@@ -78,7 +78,7 @@ def balance_tcp():
     r = 0
     while w_from_k8s != w_from_wazuh:
         print('Workers does not match, retrying...')
-        time.sleep(5)
+        sleep(5)
         r = r + 1
         if r > 5:
             print('Workers does not match, exiting...')
