@@ -17,7 +17,7 @@ endpoints = v1.list_namespaced_endpoints('wazuh')
 for endpoint in endpoints.items:
     if endpoint.metadata.name == 'wazuh-workers':
         subsets = endpoint.subsets
-        worker = subsets[0]['addresses']
+        worker = subsets[0]
         print(worker)
 exit(1)    
 
