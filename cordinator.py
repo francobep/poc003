@@ -13,7 +13,7 @@ from kubernetes import client, config
 config.load_incluster_config()
 v1 = client.CoreV1Api()
 
-pods = v1.list_namespaced_endpoints(namespace=os.environ["POD_NAMESPACE"],watch=False)
+pods = v1.list_namespaced_endpoints('wazuh')
 for pod in pods.items:
     print(str(pod))
     exit(1)
