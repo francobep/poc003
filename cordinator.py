@@ -4,7 +4,7 @@ import socket
 import json
 import requests
 
-base_url = 'https://IP:55000'
+base_url = 'https://127.0.0.1:55000'
 auth = requests.auth.HTTPBasicAuth('foo', 'bar')
 verify = False
 requests.packages.urllib3.disable_warnings()
