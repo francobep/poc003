@@ -14,8 +14,8 @@ config.load_incluster_config()
 v1 = client.CoreV1Api()
 
 endpoints = v1.list_namespaced_endpoints('wazuh')
-for pod in endpoints.items:
-    print(str(endpoints['metadata']['labels']))
+for endpoint in endpoints.items:
+    print(str(endpoint['metadata']['labels']))
 exit(1)    
 
 
