@@ -8,7 +8,7 @@ from kubernetes import client, config
 def get_workers_k8s_api():
     config.load_incluster_config()
     v1 = client.CoreV1Api()
-    endpoints = v1.list_namespaced_endpoints('wazuh') #Get NAMESPACE POD
+    endpoints = v1.list_namespaced_endpoints('wazuh') #TODO:Get NAMESPACE POD
     workers = []
     for endpoint in endpoints.items:
         if endpoint.metadata.name == 'wazuh-workers':
