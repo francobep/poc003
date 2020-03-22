@@ -5,24 +5,18 @@ import json
 import requests
 from kubernetes import client, config
 
-#config = kubernetes.client.Configuration()
-#config.host = "https://kubernetes.default.svc.cluster.local/"
-#config.verify_ssl = False
-#v1 = kubernetes.client.CoreV1Api(kubernetes.client.ApiClient(config))
-
-config.load_incluster_config()
-v1 = client.CoreV1Api()
-
-endpoints = v1.list_namespaced_endpoints('wazuh')
-for endpoint in endpoints.items:
-    if endpoint.metadata.name == 'wazuh-workers':
-        subsets = endpoint.subsets
-        ips = subsets[0].addresses
-        for ip in ips:
-            print(ip.ip)
-exit(1)    
-
-
+def get_workers_k8s_api():
+    config.load_incluster_config()
+    v1 = client.CoreV1Api()
+    endpoints = v1.list_namespaced_endpoints('wazuh') #Get NAMESPACE POD
+    workers = []
+    for endpoint in endpoints.items:
+        if endpoint.metadata.name == 'wazuh-workers':
+            subsets = endpoint.subsets
+            ips = subsets[0].addresses
+            for ip in ips:
+                workers.append(ip.ip)
+    return workers
 
 def get_workers_wazuh_api():
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.wazuh.svc.cluster.local:55000'
