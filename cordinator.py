@@ -13,10 +13,10 @@ from kubernetes import client, config
 config.load_incluster_config()
 v1 = client.CoreV1Api()
 
-pods = v1.list_namespaced_endpoints('wazuh')
-for pod in pods.items:
-    print(str(pod))
-    exit(1)
+endpoints = v1.list_namespaced_endpoints('wazuh')
+for pod in endpoints.items:
+    print(str(endpoints['metadata']['labels']))
+exit(1)    
 
 
 
