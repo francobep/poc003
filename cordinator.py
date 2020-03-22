@@ -75,7 +75,7 @@ def balance_tcp(master):
 
     #Minimum connections
     if fixed_workers_conn < 1:
-        print('no_min_conn')
+        print('Skipping "no_min_conn"')
         return 'no_min_conn'
         exit(0)
 
