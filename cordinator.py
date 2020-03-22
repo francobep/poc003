@@ -71,8 +71,18 @@ def balance_tcp():
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
+    w_from_k8s = get_workers_k8s_api()
+    w_from_wazuh = get_workers_wazuh_api()
+    #Check counts
+    r = 0
+    while w_from_k8s != w_from_wazuh:
+        print('Workers does not match, retrying...')
+        time.sleep(5)
+        r = r + 1
+        if r > 5:
+            print('Workers does not match, exiting...')
+            exit(0)
     workers = get_workers_wazuh_api()
-    
     for worker in workers:
         connections = get_connections(worker)
         worker_with_conn.append([worker,connections])
@@ -85,16 +95,11 @@ def balance_tcp():
         print('Skipping "no_min_conn"')
         return 'no_min_conn'
         exit(0)
-
     for worker in worker_with_conn:
         connections = worker[1]
         #print(str(connections))
         worker = worker[0]
         worker_connections = len(connections)
-
-        for conn in connections:
-            print(str(worker)+' ' +str(conn))
-
         if worker_connections > fixed_workers_conn:
             conn2kill = worker_connections - fixed_workers_conn
             i = 0
@@ -104,8 +109,4 @@ def balance_tcp():
                     i = i + 1
 
 if __name__ == "__main__":
-    #balance_tcp()
-    w_from_k8s = get_workers_k8s_api()
-    w_from_wazuh = get_workers_wazuh_api()
-    print(w_from_k8s)
-    print(w_from_wazuh)
+    balance_tcp()
