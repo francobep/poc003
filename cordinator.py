@@ -92,6 +92,6 @@ def balance_tcp():
                     i = i + 1
 
 if __name__ == "__main__":
-    balance_tcp()
-    #master = get_master()
+    master = get_master()
+    balance_tcp(master)
     #workers = get_workers_wazuh_api(master)
