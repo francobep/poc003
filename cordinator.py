@@ -16,7 +16,6 @@ def get_workers_k8s_api():
             ips = subsets[0].addresses
             for ip in ips:
                 workers.append(ip.ip)
-    print(str(workers))
     return workers
 
 def get_workers_wazuh_api():
@@ -106,5 +105,7 @@ def balance_tcp():
 
 if __name__ == "__main__":
     #balance_tcp()
-    get_workers_k8s_api()
-    get_workers_wazuh_api()
+    w_from_k8s = get_workers_k8s_api()
+    w_from_wazuh = get_workers_wazuh_api()
+    print(w_from_k8s)
+    print(w_from_wazuh)
