@@ -4,7 +4,7 @@ import socket
 import json
 import requests
 
-def get_workers_wazuh_api(master):
+def get_workers_wazuh_api():
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.wazuh.svc.cluster.local:55000'
     auth = requests.auth.HTTPBasicAuth('foo', 'bar')
     verify = False
