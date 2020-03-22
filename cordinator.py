@@ -107,3 +107,4 @@ def balance_tcp():
 if __name__ == "__main__":
     #balance_tcp()
     get_workers_k8s_api()
+    get_workers_wazuh_api()
