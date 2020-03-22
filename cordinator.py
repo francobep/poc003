@@ -50,8 +50,8 @@ def get_workers_wazuh_api(master):
     # Request
     url = '{0}{1}'.format(base_url, "/cluster/nodes")
     r = requests.get(url, auth=auth, params=None, verify=False)
-    response = r.json()
-    for worker in response['data']['items']:
+    json = r.json()
+    for worker in json['data']['items']:
         type = worker['type']
         if  type == "worker":
             workers.append(worker['ip'])
