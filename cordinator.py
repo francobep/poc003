@@ -14,7 +14,7 @@ config.load_incluster_config()
 v1 = client.CoreV1Api()
 
 endpoints = v1.list_namespaced_endpoints('wazuh')
-for endpoint in endpoints.items.items:
+for endpoint in endpoints.items:
     print(str(endpoint))
 exit(1)    
 
