@@ -16,6 +16,7 @@ def get_workers_k8s_api():
             ips = subsets[0].addresses
             for ip in ips:
                 workers.append(ip.ip)
+    print(str(workers))
     return workers
 
 def get_workers_wazuh_api():
