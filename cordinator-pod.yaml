@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cordinator
+  namespace: wazuh
+spec:
+  containers:
+  - name: cordinator
+    image: python:3.6-alpine3.10
+    command: ["/bin/ash", "-ec", "while :; do echo '.'; sleep 5 ; done"]
+  serviceAccountName: cordinator

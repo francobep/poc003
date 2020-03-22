@@ -3,6 +3,14 @@
 import socket
 import json
 import requests
+import kubernetes
+
+client = kubernetes.client()
+v1 = client.CoreV1Api()
+pods = v1.list_namespaced_endpoints()
+print(str(pods))
+exit(1)
+
 
 def get_workers_wazuh_api():
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.wazuh.svc.cluster.local:55000'
