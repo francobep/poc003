@@ -3,11 +3,12 @@
 import socket
 import json
 import requests
-from kubernetes import client, config
+import kubernetes
 
-config.load_kube_config()
+configuration = kubernetes.client.Configuration()
+configuration.host = "https://kubernetes.default.svc.cluster.local/"
 
-v1=client.CoreV1Api()
+v1 = kubernetes.client.CoreV1Api()
 
 pods = v1.list_namespaced_endpoints()
 print(str(pods))
