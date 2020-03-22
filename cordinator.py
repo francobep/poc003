@@ -52,11 +52,11 @@ def shudown_session(host, connection):
         rbytes = s.recv(40960)
         s.close()
 
-def balance_tcp(master):
+def balance_tcp():
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
-    workers = get_workers_wazuh_api(master)
+    workers = get_workers_wazuh_api()
     
     for worker in workers:
         connections = get_connections(worker)
@@ -89,6 +89,5 @@ def balance_tcp(master):
                     i = i + 1
 
 if __name__ == "__main__":
-    master = get_master()
-    balance_tcp(master)
+    balance_tcp()
     #workers = get_workers_wazuh_api(master)
