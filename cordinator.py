@@ -20,7 +20,8 @@ def get_workers_k8s_api():
     return workers
 
 def get_workers_wazuh_api():
-    base_url = 'https://wazuh-manager-master-0.wazuh-cluster.wazuh.svc.cluster.local:55000'
+    namespace = 'wazuh' #TODO:Get NAMESPACE POD
+    base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
     auth = requests.auth.HTTPBasicAuth('foo', 'bar')
     verify = False
     requests.packages.urllib3.disable_warnings()
