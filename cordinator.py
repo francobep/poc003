@@ -15,6 +15,7 @@ v1 = client.CoreV1Api()
 
 
 pods = v1.list_namespaced_endpoints('wazuh')
+json = pods.json()
 for pod in pods:
     print(str(pod))
     exit(1)
