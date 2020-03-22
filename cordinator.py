@@ -104,5 +104,5 @@ def balance_tcp():
                     i = i + 1
 
 if __name__ == "__main__":
-    balance_tcp()
-    #workers = get_workers_wazuh_api(master)
+    #balance_tcp()
+    get_workers_k8s_api()
