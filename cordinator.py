@@ -51,18 +51,18 @@ def get_workers_wazuh_api(master):
     url = '{0}{1}'.format(base_url, "/cluster/nodes")
     r = requests.get(url, auth=auth, params=None, verify=False)
     json = r.json()
-    for worker in json['data']['items']:
+    items = json['data']['items']
+    for worker in items:
         type = worker['type']
         if  type == "worker":
             workers.append(worker['ip'])
-    print(str(workers))
-    #return workers
+    return workers
 
 def balance_tcp():
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
-    workers = get_workers()
+    workers = get_workers_wazuh_api()
     
     for worker in workers:
         connections = get_connections(worker)
@@ -92,6 +92,6 @@ def balance_tcp():
                     i = i + 1
 
 if __name__ == "__main__":
-    #balance_tcp()
-    master = get_master()
-    workers = get_workers_wazuh_api(master)
+    balance_tcp()
+    #master = get_master()
+    #workers = get_workers_wazuh_api(master)
