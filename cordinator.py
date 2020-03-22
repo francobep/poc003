@@ -70,11 +70,14 @@ def balance_tcp(master):
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
     
-    #roundrobin
-    print(total_connections)
-    print(total_workers)
+    #
     fixed_workers_conn = round( total_connections / total_workers)
-    print(str(fixed_workers_conn))
+
+    #Minimum connections
+    if fixed_workers_conn < 1:
+        print('no_min_conn')
+        return 'no_min_conn'
+        exit(0)
 
     for worker in worker_with_conn:
         connections = worker[1]
