@@ -4,6 +4,23 @@ import socket
 import json
 import requests
 
+def get_workers_wazuh_api(master):
+    base_url = 'https://wazuh-manager-master-0.wazuh-cluster.wazuh.svc.cluster.local:55000'
+    auth = requests.auth.HTTPBasicAuth('foo', 'bar')
+    verify = False
+    requests.packages.urllib3.disable_warnings()
+    workers = []
+    # Request
+    url = '{0}{1}'.format(base_url, "/cluster/nodes")
+    r = requests.get(url, auth=auth, params=None, verify=False)
+    json = r.json()
+    items = json['data']['items']
+    for worker in items:
+        type = worker['type']
+        if  type == "worker":
+            workers.append(worker['ip'])
+    return workers
+
 def get_connections(host):
     connections = []
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -24,27 +41,6 @@ def get_connections(host):
                 connections.append(id)
                 i = i + 1
     return connections
-
-def get_master():
-    master = '127.0.0.1'
-    return master
-
-def get_workers_wazuh_api(master):
-    base_url = 'https://wazuh-manager-master-0.wazuh-cluster.wazuh.svc.cluster.local:55000'
-    auth = requests.auth.HTTPBasicAuth('foo', 'bar')
-    verify = False
-    requests.packages.urllib3.disable_warnings()
-    workers = []
-    # Request
-    url = '{0}{1}'.format(base_url, "/cluster/nodes")
-    r = requests.get(url, auth=auth, params=None, verify=False)
-    json = r.json()
-    items = json['data']['items']
-    for worker in items:
-        type = worker['type']
-        if  type == "worker":
-            workers.append(worker['ip'])
-    return workers
 
 def shudown_session(host, connection):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -67,10 +63,8 @@ def balance_tcp(master):
         worker_with_conn.append([worker,connections])
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
-    
     #
     fixed_workers_conn = round( total_connections / total_workers)
-
     #Minimum connections
     if fixed_workers_conn < 1:
         print('Skipping "no_min_conn"')
