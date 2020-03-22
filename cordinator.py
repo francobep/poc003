@@ -18,7 +18,7 @@ for endpoint in endpoints.items:
     if endpoint.metadata.labels['app'] == 'wazuh-worker':
         worker = endpoint.subsets
         print(worker)
-        exit(1)    
+    exit(1)    
 
 
 
