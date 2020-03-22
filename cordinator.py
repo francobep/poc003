@@ -15,7 +15,7 @@ v1 = client.CoreV1Api()
 
 endpoints = v1.list_namespaced_endpoints('wazuh')
 for endpoint in endpoints.items:
-    json = json.load(endpoint)
+    json = json.load(str(endpoint))
     print(str(json))
     exit(1)    
 
