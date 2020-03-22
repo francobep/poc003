@@ -72,7 +72,7 @@ def balance_tcp(master):
     
     #roundrobin
     fixed_workers_conn = round( total_connections / total_workers)
-   # print(str(fixed_workers_conn))
+    print(str(fixed_workers_conn))
 
     for worker in worker_with_conn:
         connections = worker[1]
