@@ -15,7 +15,9 @@ v1 = client.CoreV1Api()
 
 endpoints = v1.list_namespaced_endpoints('wazuh')
 for endpoint in endpoints.items:
-    print(endpoint.metadata)
+    if endpoint.metadata.labels['name'] == 'wazuh-worker':
+        worker = endpoint.subsets
+        print(worker)
 exit(1)    
 
 
