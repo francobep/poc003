@@ -2,7 +2,7 @@
 
 import socket
 
-#Reemplazar utilizando la API de Wazuh/Kubernetes
+#Reemplazar utilizando la API de Wazuh/Kubernetes 
 WORKERS = ['192.168.23.123', '192.168.5.11']
 #WORKERS = ['192.168.23.123','192.168.0.28','192.168.29.89']
 
