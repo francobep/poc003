@@ -18,7 +18,7 @@ for endpoint in endpoints.items:
     if endpoint.metadata.name == 'wazuh-workers':
         subsets = endpoint.subsets
         ips = subsets[0].addresses
-        for ip in ips.items:
+        for ip in ips:
             print(ip)
 exit(1)    
 
