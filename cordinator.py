@@ -3,10 +3,12 @@
 import socket
 import json
 import requests
-import kubernetes
+from kubernetes import client, config
 
-client = kubernetes.client()
-v1 = client.CoreV1Api()
+config.load_kube_config()
+
+v1=client.CoreV1Api()
+
 pods = v1.list_namespaced_endpoints()
 print(str(pods))
 exit(1)
