@@ -6,7 +6,7 @@ import requests
 import kubernetes
 
 configuration = kubernetes.client.Configuration()
-configuration.host = "https://kubernetes.default.svc.cluster.local/"
+configuration.host = "http://kubernetes.default.svc.cluster.local/"
 
 v1 = kubernetes.client.CoreV1Api()
 
