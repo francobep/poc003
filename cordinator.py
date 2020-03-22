@@ -10,7 +10,7 @@ configuration.host = "https://kubernetes.default.svc.cluster.local/"
 
 v1 = kubernetes.client.CoreV1Api()
 
-pods = v1.list_namespaced_endpoints()
+pods = v1.list_namespaced_endpoints('wazuh')
 print(str(pods))
 exit(1)
 
