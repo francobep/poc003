@@ -10,7 +10,7 @@ verify = False
 requests.packages.urllib3.disable_warnings()
 
 # Request
-url = '{0}{1}'.format(base_url, "/")
+url = '{0}{1}'.format(base_url, "/cluster/nodes")
 r = requests.get(url, auth=auth, params=None, verify=False)
 print(json.dumps(r.json(), indent=4, sort_keys=True))
 print("Status: {0}".format(r.status_code))
