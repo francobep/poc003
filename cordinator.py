@@ -58,11 +58,11 @@ def get_workers_wazuh_api(master):
             workers.append(worker['ip'])
     return workers
 
-def balance_tcp():
+def balance_tcp(master):
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
-    workers = get_workers_wazuh_api()
+    workers = get_workers_wazuh_api(master)
     
     for worker in workers:
         connections = get_connections(worker)
