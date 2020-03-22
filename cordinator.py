@@ -19,7 +19,7 @@ for endpoint in endpoints.items:
         subsets = endpoint.subsets
         ips = subsets[0].addresses
         for ip in ips.items:
-            print(ip['ip'])
+            print(ip)
 exit(1)    
 
 
