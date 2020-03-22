@@ -1,6 +1,22 @@
 #!/usr/bin/env python3
 
 import socket
+import json
+import requests
+
+base_url = 'https://IP:55000'
+auth = requests.auth.HTTPBasicAuth('foo', 'bar')
+verify = False
+requests.packages.urllib3.disable_warnings()
+
+# Request
+url = '{0}{1}'.format(base_url, "/")
+r = requests.get(url, auth=auth, params=None, verify=False)
+print(str(r))
+exit(1)
+
+print(json.dumps(r.json(), indent=4, sort_keys=True))
+print("Status: {0}".format(r.status_code))
 
 #Reemplazar utilizando la API de Wazuh/Kubernetes 
 WORKERS = ['192.168.23.123', '192.168.5.11']
