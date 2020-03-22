@@ -15,7 +15,7 @@ v1 = client.CoreV1Api()
 
 endpoints = v1.list_namespaced_endpoints('wazuh')
 for endpoint in endpoints.items:
-    print(str(endpoint['metadata']['labels']))
+    print(str(endpoint.items['metadata']['labels']))
 exit(1)    
 
 
