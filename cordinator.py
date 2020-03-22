@@ -5,11 +5,12 @@ import json
 import requests
 import kubernetes
 
-configuration = kubernetes.client.Configuration()
-configuration.host = "https://kubernetes.default.svc.cluster.local/"
-configuration.verify_ssl = "False"
+config = kubernetes.client.Configuration()
+config.host = "https://kubernetes.default.svc.cluster.local/"
+config.verify_ssl = "False"
 
-v1 = kubernetes.client.CoreV1Api()
+
+v1 = kubernetes.client.CoreV1Api(kubernetes.client.ApiClient(config))
 
 pods = v1.list_namespaced_endpoints('wazuh')
 print(str(pods))
