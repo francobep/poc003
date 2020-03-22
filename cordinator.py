@@ -4,7 +4,7 @@ import socket
 import json
 import requests
 from kubernetes import client, config
-import time
+from time import sleep
 
 def get_workers_k8s_api():
     config.load_incluster_config()
