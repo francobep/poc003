@@ -15,8 +15,10 @@ v1 = client.CoreV1Api()
 
 
 pods = v1.list_namespaced_endpoints('wazuh')
-print(str(pods))
-exit(1)
+for pod in pods:
+    print(str(pod))
+    exit(1)
+
 
 
 def get_workers_wazuh_api():
