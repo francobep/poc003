@@ -12,12 +12,9 @@ requests.packages.urllib3.disable_warnings()
 # Request
 url = '{0}{1}'.format(base_url, "/")
 r = requests.get(url, auth=auth, params=None, verify=False)
-print(str(r))
-exit(1)
-
 print(json.dumps(r.json(), indent=4, sort_keys=True))
 print("Status: {0}".format(r.status_code))
-
+exit(1)
 #Reemplazar utilizando la API de Wazuh/Kubernetes 
 WORKERS = ['192.168.23.123', '192.168.5.11']
 #WORKERS = ['192.168.23.123','192.168.0.28','192.168.29.89']
