@@ -74,8 +74,9 @@ def balance_tcp():
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
+    workers = get_workers_wazuh_api()
     w_from_k8s = len(get_workers_k8s_api())
-    w_from_wazuh = len(get_workers_wazuh_api())
+    w_from_wazuh = len(workers)
     #Check counts
     r = 0
     while w_from_k8s != w_from_wazuh:
@@ -85,7 +86,6 @@ def balance_tcp():
         if retry > 5:
             print('Workers does not match, exiting...')
             exit(0)
-    workers = get_workers_wazuh_api()
     for worker in workers:
         connections = get_connections(worker)
         worker_with_conn.append([worker,connections])
