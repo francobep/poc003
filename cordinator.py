@@ -17,6 +17,7 @@ def get_workers_k8s_api():
             ips = subsets[0].addresses
             for ip in ips:
                 workers.append(ip.ip)
+    print('From K8s API:\n' + str(workers))
     return workers
 
 def get_workers_wazuh_api():
@@ -35,6 +36,7 @@ def get_workers_wazuh_api():
         type = worker['type']
         if  type == "worker":
             workers.append(worker['ip'])
+    print('From Wazuh API:\n' + str(workers))
     return workers
 
 def get_connections(host):
@@ -98,7 +100,6 @@ def balance_tcp():
         exit(0)
     for worker in worker_with_conn:
         connections = worker[1]
-        #print(str(connections))
         worker = worker[0]
         worker_connections = len(connections)
         if worker_connections > fixed_workers_conn:
