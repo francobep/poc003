@@ -79,8 +79,8 @@ def balance_tcp():
     while w_from_k8s != w_from_wazuh:
         print('Workers does not match, retrying...')
         sleep(5)
-        r = r + 1
-        if r > 5:
+        retry = retry + 1
+        if retry > 5:
             print('Workers does not match, exiting...')
             exit(0)
     workers = get_workers_wazuh_api()
