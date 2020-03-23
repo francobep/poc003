@@ -88,6 +88,7 @@ def balance_tcp():
             exit(0)
     for worker in workers:
         connections = get_connections(worker)
+        print(str(connections))
         worker_with_conn.append([worker,connections])
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
