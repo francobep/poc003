@@ -72,8 +72,8 @@ def balance_tcp():
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
-    w_from_k8s = get_workers_k8s_api()
-    w_from_wazuh = get_workers_wazuh_api()
+    w_from_k8s = len(get_workers_k8s_api())
+    w_from_wazuh = len(get_workers_wazuh_api())
     #Check counts
     r = 0
     while w_from_k8s != w_from_wazuh:
