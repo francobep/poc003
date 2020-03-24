@@ -118,7 +118,7 @@ def balance_tcp():
             i = 0
             for conn in connections:
                 if conn2kill != i :
-                    #shudown_session(worker,conn)
+                    shudown_session(worker,conn)
                     i = i + 1
 
 if __name__ == "__main__":
