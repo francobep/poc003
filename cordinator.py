@@ -88,7 +88,7 @@ def balance_tcp():
     w_from_k8s = len(get_workers_k8s_api())
     w_from_wazuh = len(workers)
     #Check counts
-    r = 0
+    retry = 0
     while w_from_k8s != w_from_wazuh:
         print('Workers does not match, retrying...')
         sleep(5)
