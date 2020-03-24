@@ -74,7 +74,7 @@ def set_server_state(host, state):
     if state == "ready" or state == "drain" or state == "maint":
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((host, 9999))
-            payload = "set server l1/srv1 state" + state + "\n"
+            payload = "set server l1/srv1 state " + state + "\n"
             payload = payload.encode()
             print(payload)
             s.sendall(payload)
