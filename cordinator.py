@@ -70,6 +70,16 @@ def shudown_session(host, connection):
         rbytes = s.recv(40960)
         s.close()
 
+def set_drain(host, state):
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((host, 9999))
+        payload = 'shutdown session ' + connection + '\n'
+        payload = payload.encode()
+        print(payload)
+        s.sendall(payload)
+        rbytes = s.recv(40960)
+        s.close()
+
 def balance_tcp():
     worker_with_conn = []
     total_connections = 0
@@ -108,7 +118,7 @@ def balance_tcp():
             i = 0
             for conn in connections:
                 if conn2kill != i :
-                    shudown_session(worker,conn)
+                    #shudown_session(worker,conn)
                     i = i + 1
 
 if __name__ == "__main__":
