@@ -127,7 +127,7 @@ def balance_tcp():
                     shudown_session(worker,conn)
                     i = i + 1
     print("Waiting 60s to renew connections...")
-    sleep(60)
+    sleep(120)
     for worker in worker_with_conn:
         worker = worker[0]
         set_server_state(worker,"ready")
