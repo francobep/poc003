@@ -70,15 +70,19 @@ def shudown_session(host, connection):
         rbytes = s.recv(40960)
         s.close()
 
-def set_drain(host, state):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((host, 9999))
-        payload = 'shutdown session ' + connection + '\n'
-        payload = payload.encode()
-        print(payload)
-        s.sendall(payload)
-        rbytes = s.recv(40960)
-        s.close()
+def set_server_state(host, state):
+    if state == "ready" or state == "drain":
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((host, 9999))
+            payload = "set server srv1 " + state + "\n"
+            payload = payload.encode()
+            print(payload)
+            s.sendall(payload)
+            rbytes = s.recv(40960)
+            s.close()
+    else:
+        print("State no supported. Exiting...")
+        exit(1)
 
 def balance_tcp():
     worker_with_conn = []
@@ -116,10 +120,16 @@ def balance_tcp():
         if worker_connections > fixed_workers_conn:
             conn2kill = worker_connections - fixed_workers_conn
             i = 0
+            set_server_state(worker,"drain")
             for conn in connections:
                 if conn2kill != i :
                     shudown_session(worker,conn)
                     i = i + 1
+    sleep(20)
+    for worker in worker_with_conn:
+        set_server_state(worker,"ready")
+
+
 
 if __name__ == "__main__":
     balance_tcp()
