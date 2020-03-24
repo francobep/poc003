@@ -49,7 +49,8 @@ def get_connections(host):
         s.close()
         data = str(rbytes).replace("b'", "").replace("'", "").replace(':','').replace('\\n\\n', '').split('\\n')
         datalength = len(data) - 1
-
+        print(str(data))
+        exit(1)
         i = 0
         connections = []
         for line in data:
