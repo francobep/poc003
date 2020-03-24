@@ -43,7 +43,7 @@ def get_connections(host):
     connections = []
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, 9999))
-        payload = 'clear counters all;show stat json\n'
+        payload = 'show stat json\n'
         s.sendall(bytes(payload.encode()))
         rbytes = s.recv(40960)
         s.close()
