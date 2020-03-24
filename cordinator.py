@@ -108,7 +108,7 @@ def balance_tcp():
         total_workers = total_workers + 1
     #
     fixed_workers_conn = round( total_connections / total_workers)
-    print("Fixed connections per worker: " + fixed_workers_conn)
+    print("Fixed connections per worker: " + str(fixed_workers_conn))
     #Minimum connections
     if fixed_workers_conn < 1:
         print('Skipping "no_min_conn"')
