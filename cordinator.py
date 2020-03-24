@@ -118,7 +118,7 @@ def balance_tcp():
         connections = worker[1]
         worker = worker[0]
         worker_connections = len(connections)
-        if worker_connections > fixed_workers_conn:
+        if worker_connections > fixed_workers_conn + 1:
             conn2kill = worker_connections - fixed_workers_conn
             i = 0
             set_server_state(worker,"drain")
