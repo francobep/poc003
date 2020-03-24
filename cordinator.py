@@ -71,7 +71,7 @@ def shudown_session(host, connection):
         s.close()
 
 def set_server_state(host, state):
-    if state == "ready" or state == "drain":
+    if state == "ready" or state == "drain" or state == "maint":
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((host, 9999))
             payload = "set server srv1 " + state + "\n"
@@ -120,12 +120,12 @@ def balance_tcp():
         if worker_connections > fixed_workers_conn:
             conn2kill = worker_connections - fixed_workers_conn
             i = 0
-            set_server_state(worker,"drain")
+            set_server_state(worker,"maint")
             for conn in connections:
                 if conn2kill != i :
                     shudown_session(worker,conn)
                     i = i + 1
-    sleep(60)
+    sleep(10)
     for worker in worker_with_conn:
         worker = worker[0]
         set_server_state(worker,"ready")
