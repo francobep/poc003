@@ -125,7 +125,7 @@ def balance_tcp():
                 if conn2kill != i :
                     shudown_session(worker,conn)
                     i = i + 1
-    sleep(20)
+    sleep(60)
     for worker in worker_with_conn:
         worker = worker[0]
         set_server_state(worker,"ready")
