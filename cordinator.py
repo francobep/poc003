@@ -127,6 +127,7 @@ def balance_tcp():
                     i = i + 1
     sleep(20)
     for worker in worker_with_conn:
+        worker = worker[0]
         set_server_state(worker,"ready")
 
 
