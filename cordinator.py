@@ -121,7 +121,7 @@ def balance_tcp():
         if worker_connections > fixed_workers_conn:
             conn2kill = worker_connections - fixed_workers_conn
             i = 0
-            set_server_state(worker,"maint")
+            set_server_state(worker,"drain")
             for conn in connections:
                 if conn2kill != i :
                     shudown_session(worker,conn)
