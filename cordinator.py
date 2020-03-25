@@ -71,7 +71,7 @@ def get_connections(host):
                 line = line.split(' ')
                 id = line[0]
                 traffic = get_traffic(host,id)
-                connections.append(id,traffic)
+                connections.append([id,traffic])
                 i = i + 1
         print(str(connections))
         exit(1)
