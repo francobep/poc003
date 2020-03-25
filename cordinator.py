@@ -194,6 +194,7 @@ def tcp_sessions_and_load():
         print('Skipping "no_min_conn"')
         return 'no_min_conn'
         exit(0)
+    wait = False
     for worker in worker_with_conn:
         connections = worker[1]
         worker = worker[0]
