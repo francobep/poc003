@@ -190,7 +190,7 @@ def tcp_sessions_and_load():
         connections = []
         connections_with_load = get_connections(worker)
         print(connections_with_load)
-        print(connections_with_load.sortSecond())
+        print(connections_with_load.sort(key = sortSecond))
         exit(1)
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
