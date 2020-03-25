@@ -40,7 +40,7 @@ def get_workers_wazuh_api():
     print('From Wazuh API:\n' + str(workers))
     return workers
 
-def get_traffic(connection):
+def get_traffic(host, connection):
     traffic = 0
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, 9999))
@@ -69,7 +69,7 @@ def get_connections(host):
             if datalength > i:
                 line = line.split(' ')
                 id = line[0]
-                traffic = get_traffic(id)
+                traffic = get_traffic(host,id)
                 connections.append(id)
                 i = i + 1
     return connections
