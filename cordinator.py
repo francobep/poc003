@@ -52,8 +52,6 @@ def get_traffic(host, connection):
         for total in rawtotals:
             tbytes = int(total.replace("total=", ""))
             traffic = traffic + tbytes
-        print(str(traffic))
-        exit(1)
     return traffic
 
 def get_connections(host):
