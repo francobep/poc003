@@ -5,6 +5,7 @@ import requests
 from kubernetes import client, config
 from time import sleep
 import re
+from operator import itemgetter
 
 # Retorna segundo valor
 def sortSecond(val): 
@@ -78,7 +79,7 @@ def get_connections(host):
                 line = line.split(' ')
                 id = line[0]
                 traffic = get_traffic(host,id)
-                connections.append((id,traffic))
+                connections.append([id,traffic])
                 i = i + 1
     return connections
 
@@ -191,7 +192,7 @@ def tcp_sessions_and_load():
         connections_with_load = get_connections(worker)
         print(str(connections_with_load))
         print("<<<>>>")
-        print(str(connections_with_load.sort(key = sortSecond)))
+        print(str(connections_with_load.sorted(key=itemgetter(2))))
         exit(1)
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
