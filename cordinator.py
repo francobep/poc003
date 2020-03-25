@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import socket
-import json
 import requests
 from kubernetes import client, config
 from time import sleep
