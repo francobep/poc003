@@ -101,7 +101,7 @@ def set_server_state(host, state):
         print("State no supported. Exiting...")
         exit(1)
 
-def balance_tcp():
+def tcp_sessions():
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
@@ -118,12 +118,15 @@ def balance_tcp():
             print('Workers does not match, exiting...')
             exit(0)
     for worker in workers:
-        connections = get_connections(worker)
-        print(str(connections))
+        connections_with_load = get_connections(worker)
+        for connection_with_load in connections_with_load:
+            connection = connection_with_load[0]
+            print(str(connection))
+            exit(1)
         worker_with_conn.append([worker,connections])
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
-    #
+
     fixed_workers_conn = round( total_connections / total_workers)
     print("Fixed connections per worker: " + str(fixed_workers_conn))
     #Minimum connections
@@ -152,4 +155,4 @@ def balance_tcp():
 
 
 if __name__ == "__main__":
-    balance_tcp()
+    tcp_sessions()
