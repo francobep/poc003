@@ -48,7 +48,7 @@ def get_traffic(host, connection):
         s.sendall(bytes(payload.encode()))
         rbytes = s.recv(40960)
         s.close()
-        totals = re.findall(r"(total=\d+)", str(rbytes).replace("totals=", ""))
+        totals = re.findall(r"(total=\d+)", str(rbytes).replace("total=", ""))
         print(str(totals))
         exit(1)
     return traffic
