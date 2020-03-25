@@ -189,9 +189,9 @@ def tcp_sessions_and_load():
     for worker in workers:
         connections = []
         connections_with_load = get_connections(worker)
-        print(connections_with_load)
+        print(str(connections_with_load))
         print("<<<>>>")
-        print(connections_with_load.sort(key = sortSecond))
+        print(str(connections_with_load.sort(key = sortSecond)))
         exit(1)
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
