@@ -73,8 +73,6 @@ def get_connections(host):
                 traffic = get_traffic(host,id)
                 connections.append([id,traffic])
                 i = i + 1
-        print(str(connections))
-        exit(1)
     return connections
 
 def shudown_session(host, connection):
