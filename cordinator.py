@@ -116,7 +116,7 @@ def tcp_sessions():
     workers = get_workers_wazuh_api()
     w_from_k8s = len(get_workers_k8s_api())
     w_from_wazuh = len(workers)
-    #Check counts
+
     retry = 0
     while w_from_k8s != w_from_wazuh:
         print('Workers does not match, retrying...')
@@ -125,6 +125,7 @@ def tcp_sessions():
         if retry > 5:
             print('Workers does not match, exiting...')
             exit(0)
+
     for worker in workers:
         connections = []
         connections_with_load = get_connections(worker)
@@ -142,6 +143,7 @@ def tcp_sessions():
         print('Skipping "no_min_conn"')
         return 'no_min_conn'
         exit(0)
+
     wait = False
     for worker in worker_with_conn:
         connections = worker[1]
@@ -156,6 +158,7 @@ def tcp_sessions():
                 if conn2kill != i :
                     shudown_session(worker,conn)
                     i = i + 1
+
     if wait:
         print("Waiting 30s to renew connections...")
         sleep(30)
@@ -173,7 +176,7 @@ def tcp_sessions_and_load():
     workers = get_workers_wazuh_api()
     w_from_k8s = len(get_workers_k8s_api())
     w_from_wazuh = len(workers)
-    #Check counts
+
     retry = 0
     while w_from_k8s != w_from_wazuh:
         print('Workers does not match, retrying...')
@@ -182,9 +185,13 @@ def tcp_sessions_and_load():
         if retry > 5:
             print('Workers does not match, exiting...')
             exit(0)
+
     for worker in workers:
         connections = []
         connections_with_load = get_connections(worker)
+        print(connections_with_load)
+        print(connections_with_load.sortSecond())
+        exit(1)
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
             connections.append(connection)
@@ -194,11 +201,11 @@ def tcp_sessions_and_load():
 
     fixed_workers_conn = round( total_connections / total_workers)
     print("Fixed connections per worker: " + str(fixed_workers_conn))
-    #Minimum connections
     if fixed_workers_conn < 1:
         print('Skipping "no_min_conn"')
         return 'no_min_conn'
         exit(0)
+
     wait = False
     for worker in worker_with_conn:
         connections = worker[1]
