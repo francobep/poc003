@@ -116,11 +116,13 @@ def tcp_sessions():
             print('Workers does not match, exiting...')
             exit(0)
     for worker in workers:
+        connections = []
         connections_with_load = get_connections(worker)
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
-            print(str(connection))
-            exit(1)
+            connections.append(connection)
+        print(str(connections))
+        exit(1)
         worker_with_conn.append([worker,connections])
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
