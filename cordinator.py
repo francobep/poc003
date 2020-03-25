@@ -142,11 +142,13 @@ def tcp_sessions():
         print('Skipping "no_min_conn"')
         return 'no_min_conn'
         exit(0)
+    wait = False
     for worker in worker_with_conn:
         connections = worker[1]
         worker = worker[0]
         worker_connections = len(connections)
         if worker_connections > fixed_workers_conn + 1:
+            wait = True
             conn2kill = worker_connections - fixed_workers_conn
             i = 0
             set_server_state(worker,"drain")
@@ -154,11 +156,14 @@ def tcp_sessions():
                 if conn2kill != i :
                     shudown_session(worker,conn)
                     i = i + 1
-    print("Waiting 30s to renew connections...")
-    sleep(30)
-    for worker in worker_with_conn:
-        worker = worker[0]
-        set_server_state(worker,"ready")
+    if wait:
+        print("Waiting 30s to renew connections...")
+        sleep(30)
+        for worker in worker_with_conn:
+            worker = worker[0]
+            set_server_state(worker,"ready")
+    else:
+        print("Nothing to do, bye...")
 
 # Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers, ordenando sesiones por trafico.
 def tcp_sessions_and_load():
@@ -221,4 +226,4 @@ def tcp_sessions_and_load():
 
 
 if __name__ == "__main__":
-    tcp_sessions_and_load()
+    tcp_sessions()
