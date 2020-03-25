@@ -7,6 +7,9 @@ from kubernetes import client, config
 from time import sleep
 import re
 
+def sortSecond(val): 
+    return val[1] 
+
 def get_workers_k8s_api():
     config.load_incluster_config()
     v1 = client.CoreV1Api()
@@ -121,8 +124,57 @@ def tcp_sessions():
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
             connections.append(connection)
-        print(str(connections))
-        exit(1)
+        worker_with_conn.append([worker,connections])
+        total_connections = total_connections + len(connections)
+        total_workers = total_workers + 1
+
+    fixed_workers_conn = round( total_connections / total_workers)
+    print("Fixed connections per worker: " + str(fixed_workers_conn))
+    #Minimum connections
+    if fixed_workers_conn < 1:
+        print('Skipping "no_min_conn"')
+        return 'no_min_conn'
+        exit(0)
+    for worker in worker_with_conn:
+        connections = worker[1]
+        worker = worker[0]
+        worker_connections = len(connections)
+        if worker_connections > fixed_workers_conn + 1:
+            conn2kill = worker_connections - fixed_workers_conn
+            i = 0
+            set_server_state(worker,"drain")
+            for conn in connections:
+                if conn2kill != i :
+                    shudown_session(worker,conn)
+                    i = i + 1
+    print("Waiting 30s to renew connections...")
+    sleep(30)
+    for worker in worker_with_conn:
+        worker = worker[0]
+        set_server_state(worker,"ready")
+
+def tcp_sessions_and_load():
+    worker_with_conn = []
+    total_connections = 0
+    total_workers = 0
+    workers = get_workers_wazuh_api()
+    w_from_k8s = len(get_workers_k8s_api())
+    w_from_wazuh = len(workers)
+    #Check counts
+    retry = 0
+    while w_from_k8s != w_from_wazuh:
+        print('Workers does not match, retrying...')
+        sleep(5)
+        retry = retry + 1
+        if retry > 5:
+            print('Workers does not match, exiting...')
+            exit(0)
+    for worker in workers:
+        connections = []
+        connections_with_load = get_connections(worker)
+        for connection_with_load in connections_with_load:
+            connection = connection_with_load[0]
+            connections.append(connection)
         worker_with_conn.append([worker,connections])
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
@@ -155,4 +207,4 @@ def tcp_sessions():
 
 
 if __name__ == "__main__":
-    tcp_sessions()
+    tcp_sessions_and_load()
