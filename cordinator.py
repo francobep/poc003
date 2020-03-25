@@ -199,6 +199,7 @@ def tcp_sessions_and_load():
         worker = worker[0]
         worker_connections = len(connections)
         if worker_connections > fixed_workers_conn + 1:
+            wait = True
             conn2kill = worker_connections - fixed_workers_conn
             i = 0
             set_server_state(worker,"drain")
@@ -207,10 +208,11 @@ def tcp_sessions_and_load():
                     shudown_session(worker,conn)
                     i = i + 1
     print("Waiting 30s to renew connections...")
-    sleep(30)
-    for worker in worker_with_conn:
-        worker = worker[0]
-        set_server_state(worker,"ready")
+    if wait:
+        sleep(30)
+        for worker in worker_with_conn:
+            worker = worker[0]
+            set_server_state(worker,"ready")
 
 
 
