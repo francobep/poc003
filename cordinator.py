@@ -5,6 +5,7 @@ import json
 import requests
 from kubernetes import client, config
 from time import sleep
+import re
 
 def get_workers_k8s_api():
     config.load_incluster_config()
@@ -39,6 +40,19 @@ def get_workers_wazuh_api():
     print('From Wazuh API:\n' + str(workers))
     return workers
 
+def get_traffic(connection):
+    traffic = 0
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect((host, 9999))
+        payload = 'show sess ' + connection + '\n'
+        s.sendall(bytes(payload.encode()))
+        rbytes = s.recv(40960)
+        s.close()
+        totals = re.findall(r"(total=\d+)", str(rbytes))
+        print(str(totals))
+        exit(1)
+    return traffic
+
 def get_connections(host):
     connections = []
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -47,8 +61,6 @@ def get_connections(host):
         s.sendall(bytes(payload.encode()))
         rbytes = s.recv(40960)
         s.close()
-        print(str(rbytes))
-        exit(1)
         data = str(rbytes).replace("b'", "").replace("'", "").replace(':','').replace('\\n\\n', '').split('\\n')
         datalength = len(data) - 1
         i = 0
@@ -57,6 +69,7 @@ def get_connections(host):
             if datalength > i:
                 line = line.split(' ')
                 id = line[0]
+                traffic = get_traffic(id)
                 connections.append(id)
                 i = i + 1
     return connections
