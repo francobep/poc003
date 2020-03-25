@@ -207,4 +207,4 @@ def tcp_sessions_and_load():
 
 
 if __name__ == "__main__":
-    tcp_sessions_and_load()
+    tcp_sessions()
