@@ -43,7 +43,7 @@ def get_connections(host):
     connections = []
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, 9999))
-        payload = 'show sess 0x7fe7080201e0\n'
+        payload = 'show sess\n'
         s.sendall(bytes(payload.encode()))
         rbytes = s.recv(40960)
         s.close()
