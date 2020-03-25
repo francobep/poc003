@@ -7,9 +7,11 @@ from kubernetes import client, config
 from time import sleep
 import re
 
+# Retorna segundo valor
 def sortSecond(val): 
     return val[1] 
 
+# Retorna IP de endpoints del servicio wazuh-workers
 def get_workers_k8s_api():
     config.load_incluster_config()
     v1 = client.CoreV1Api()
@@ -24,6 +26,7 @@ def get_workers_k8s_api():
     print('From K8s API:\n' + str(workers))
     return workers
 
+# Retorna lista de IP de workers del servicio API de Wazuh
 def get_workers_wazuh_api():
     namespace = 'wazuh' #TODO:Get NAMESPACE POD
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
@@ -43,6 +46,7 @@ def get_workers_wazuh_api():
     print('From Wazuh API:\n' + str(workers))
     return workers
 
+# Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
 def get_traffic(host, connection):
     traffic = 0
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -57,6 +61,7 @@ def get_traffic(host, connection):
             traffic = traffic + tbytes
     return traffic
 
+# Retorna lista de conexiones,trafico de un worker
 def get_connections(host):
     connections = []
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -78,6 +83,7 @@ def get_connections(host):
                 i = i + 1
     return connections
 
+# Elimina una sesion pasando ID. 
 def shudown_session(host, connection):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, 9999))
@@ -88,6 +94,7 @@ def shudown_session(host, connection):
         rbytes = s.recv(40960)
         s.close()
 
+# Establece el estado de un worker ( via HAPROXY )
 def set_server_state(host, state):
     if state == "ready" or state == "drain" or state == "maint":
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -102,6 +109,7 @@ def set_server_state(host, state):
         print("State no supported. Exiting...")
         exit(1)
 
+# Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers
 def tcp_sessions():
     worker_with_conn = []
     total_connections = 0
@@ -153,6 +161,7 @@ def tcp_sessions():
         worker = worker[0]
         set_server_state(worker,"ready")
 
+# Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers, ordenando sesiones por trafico.
 def tcp_sessions_and_load():
     worker_with_conn = []
     total_connections = 0
