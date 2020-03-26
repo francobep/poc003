@@ -269,4 +269,4 @@ def tcp_sessions_and_load():
 
 
 if __name__ == "__main__":
-    send_to_socket("192.168.16.215", "mensage")
+    send_to_socket("192.168.16.215", "show sess")
