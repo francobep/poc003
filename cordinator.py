@@ -99,7 +99,7 @@ def get_connections(host):
         s.connect((host, 9999))
         payload = 'show sess\n'
         s.sendall(bytes(payload.encode()))
-        s.
+        s.connect((host, 9999))
         rbytes = s.recv(409600)
         s.close()
         data = str(rbytes).replace("b'", "").replace("'", "").replace(':','').replace('\\n\\n', '').split('\\n')
