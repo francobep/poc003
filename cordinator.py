@@ -28,7 +28,7 @@ def send_to_socket(host,msg):
             return False
         else:
             print("snd: "+str(msg))
-            print(str(data[0]))
+            print(str(data))
     finally:
         s.close()
         exit(1)
