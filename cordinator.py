@@ -28,8 +28,8 @@ def send_to_socket(host,msg):
         except (socket.timeout):
             return False
         else:
-            logging.info("snd: "+str(msg))
-            logging.info(str(data))
+            logging.error("snd: "+str(msg))
+            logging.error(str(data))
     finally:
         s.close()
         exit(1)
