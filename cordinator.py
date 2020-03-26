@@ -203,6 +203,7 @@ def tcp_sessions_and_load():
         total_workers = total_workers + 1
 
     fixed_workers_conn = round( total_connections / total_workers)
+    print("Total connections: " + str(total_connections))
     print("Fixed connections per worker: " + str(fixed_workers_conn))
     if fixed_workers_conn < 1:
         print('Skipping "no_min_conn"')
