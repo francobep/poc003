@@ -224,6 +224,8 @@ def tcp_sessions_and_load():
                 if conn2kill != i and i % 2 != 0 : 
                     shudown_session(worker,conn)
                     i = i + 1
+
+                    ###pesos 
     
     if wait:
         print("Waiting 30s to renew connections...")
@@ -237,4 +239,4 @@ def tcp_sessions_and_load():
 
 
 if __name__ == "__main__":
-    tcp_sessions_and_load()
+    tcp_sessions()
