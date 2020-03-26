@@ -230,8 +230,8 @@ def tcp_sessions_and_load():
                     ###pesos 
     
     if wait:
-        print("Waiting 30s to renew connections...")
-        sleep(30)
+        print("Waiting 120s to renew connections...")
+        sleep(120)
         for worker in worker_with_conn:
             worker = worker[0]
             set_server_state(worker,"ready")
