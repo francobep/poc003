@@ -15,22 +15,26 @@ def sortSecond(val):
 def get_workers_k8s_api():
     config.load_incluster_config()
     v1 = client.CoreV1Api()
-    endpoints = v1.list_namespaced_endpoints('wazuh') #TODO:Get NAMESPACE POD
-    workers = []
-    for endpoint in endpoints.items:
-        if endpoint.metadata.name == 'wazuh-workers':
-            subsets = endpoint.subsets
-            ips = subsets[0].addresses
-            for ip in ips:
-                workers.append(ip.ip)
-    print('From K8s API:' + str(len(workers)))
+    try:
+        endpoints = v1.list_namespaced_endpoints('wazuh') #TODO:Get NAMESPACE POD
+        workers = []
+        for endpoint in endpoints.items:
+            if endpoint.metadata.name == 'wazuh-workers':
+                subsets = endpoint.subsets
+                ips = subsets[0].addresses
+                for ip in ips:
+                    workers.append(ip.ip)
+        print('From K8s API:' + str(len(workers)))
+    except Exception as e:
+        print(str(e))
+        exit(1)
     return workers
 
 # Retorna lista de IP de workers del servicio API de Wazuh
 def get_workers_wazuh_api():
     namespace = 'wazuh' #TODO:Get NAMESPACE POD
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
-    auth = requests.auth.HTTPBasicAuth('foo', 'bar')
+    auth = requests.auth.HTTPBasicAuth('foo', 'bar') #TODO Get API Credentials
     verify = False
     requests.packages.urllib3.disable_warnings()
     workers = []
@@ -215,7 +219,8 @@ def tcp_sessions_and_load():
             i = 0
             set_server_state(worker,"drain")
             for conn in connections:
-                if conn2kill != i :
+                # Mata posiciones impares.
+                if conn2kill != i and i % 2 != 0 : 
                     shudown_session(worker,conn)
                     i = i + 1
     
