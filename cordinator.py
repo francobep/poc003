@@ -168,8 +168,8 @@ def tcp_sessions():
                     i = i + 1
 
     if wait:
-        print("Waiting 300s to renew connections...")
-        sleep(300)
+        print("Waiting 60s to renew connections...")
+        sleep(60)
         for worker in worker_with_conn:
             worker = worker[0]
             set_server_state(worker,"ready")
