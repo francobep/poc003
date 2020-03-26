@@ -2,9 +2,9 @@
 
 import socket
 import requests
+import re
 from kubernetes import client, config
 from time import sleep
-import re
 from operator import itemgetter
 
 # Retorna segundo valor

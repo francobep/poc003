@@ -9,7 +9,7 @@ spec:
   completions: 1
   template:
     metadata:
-      name: cordinator-pod
+      name: cordinator-job
     spec:
       priorityClassName: system-cluster-critical
   containers:
