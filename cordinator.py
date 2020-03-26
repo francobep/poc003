@@ -23,7 +23,7 @@ def get_workers_k8s_api():
             ips = subsets[0].addresses
             for ip in ips:
                 workers.append(ip.ip)
-    print('From K8s API:\n' + str(workers))
+    print('From K8s API:' + len(workers))
     return workers
 
 # Retorna lista de IP de workers del servicio API de Wazuh
@@ -43,7 +43,7 @@ def get_workers_wazuh_api():
         type = worker['type']
         if  type == "worker":
             workers.append(worker['ip'])
-    print('From Wazuh API:\n' + str(workers))
+    print('From Wazuh API:' + len(workers))
     return workers
 
 # Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
