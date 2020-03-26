@@ -143,6 +143,7 @@ def tcp_sessions():
         total_workers = total_workers + 1
 
     fixed_workers_conn = round( total_connections / total_workers)
+    print("Total connections: " + str(total_connections))
     print("Fixed connections per worker: " + str(fixed_workers_conn))
     #Minimum connections
     if fixed_workers_conn < 1:
