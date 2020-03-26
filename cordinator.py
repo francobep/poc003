@@ -6,6 +6,7 @@ import re
 import os
 import json
 import six
+import logging
 from kubernetes import client, config
 from time import sleep
 from operator import itemgetter
@@ -27,8 +28,8 @@ def send_to_socket(host,msg):
         except (socket.timeout):
             return False
         else:
-            print("snd: "+str(msg))
-            print(str(data))
+            logging.info("snd: "+str(msg))
+            logging.info(str(data))
     finally:
         s.close()
         exit(1)
