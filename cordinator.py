@@ -25,7 +25,7 @@ def get_workers_k8s_api():
                 ips = subsets[0].addresses
                 for ip in ips:
                     workers.append(ip.ip)
-        print("Total Workers from K8s API:" + str(len(workers)))
+        print("Total Workers from K8s API :" + str(len(workers)))
     except Exception as e:
         print(str(e))
         exit(1)
@@ -48,7 +48,7 @@ def get_workers_wazuh_api():
         type = worker['type']
         if  type == "worker":
             workers.append(worker['ip'])
-    print("Total Workers from Wazuh API:" + str(len(workers)))
+    print("Total Workers from Wazuh API :" + str(len(workers)))
     return workers
 
 # Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
