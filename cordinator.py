@@ -17,7 +17,7 @@ def send_to_socket(host,msg):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(0.1)
         s.connect((host, 9999))
-        s.send(six.b('show sess 0x5600a65fd9e0:' + '\n'))
+        s.send(six.b(msg + '\n'))
         file_handle = s.makefile()
     except (socket.timeout):
         return False
@@ -27,7 +27,7 @@ def send_to_socket(host,msg):
         except (socket.timeout):
             return False
         else:
-            print(str(data))
+            print(str(data[0]))
     finally:
         s.close()
         exit(1)
