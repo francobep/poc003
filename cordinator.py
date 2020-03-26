@@ -17,7 +17,7 @@ def send_to_socket(host,msg):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(0.1)
         s.connect((host, 9999))
-        s.send(six.b('show info' + '\n'))
+        s.send(six.b('show sess' + '\n'))
         file_handle = s.makefile()
     except (socket.timeout):
         return False
