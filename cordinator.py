@@ -271,4 +271,6 @@ def tcp_sessions_and_load():
 
 
 if __name__ == "__main__":
+    ch = logging.StreamHandler()
+    logger.addHandler(ch)
     send_to_socket("192.168.15.84", "show sess")
