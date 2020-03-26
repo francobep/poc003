@@ -3,10 +3,36 @@
 import socket
 import requests
 import re
+import os
 import json
+import six
 from kubernetes import client, config
 from time import sleep
 from operator import itemgetter
+
+
+#sendsocket
+def send_to_socket(host,msg):
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(0.1)
+        s.connect((host, 9999))
+        s.send(six.b('show info' + '\n'))
+        file_handle = s.makefile()
+    except (socket.timeout):
+        return False
+    else:
+        try:
+            data = file_handle.read().splitlines()
+        except (socket.timeout):
+            return False
+        else:
+            print(str(data))
+    finally:
+        s.close()
+        exit(1)
+
+
 
 # Retorna segundo valor
 def sortSecond(val): 
@@ -73,7 +99,8 @@ def get_connections(host):
         s.connect((host, 9999))
         payload = 'show sess\n'
         s.sendall(bytes(payload.encode()))
-        rbytes = s.recv(40960)
+        s.
+        rbytes = s.recv(409600)
         s.close()
         data = str(rbytes).replace("b'", "").replace("'", "").replace(':','').replace('\\n\\n', '').split('\\n')
         datalength = len(data) - 1
@@ -242,4 +269,4 @@ def tcp_sessions_and_load():
 
 
 if __name__ == "__main__":
-    tcp_sessions()
+    send_to_socket("192.168.16.215", "mensage")
