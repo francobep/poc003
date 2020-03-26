@@ -190,10 +190,8 @@ def tcp_sessions_and_load():
     for worker in workers:
         connections = []
         connections_with_load = get_connections(worker)
-        print(str(connections_with_load))
-        print("<<<>>>")
-        print(str(sorted(connections_with_load, key=itemgetter(1), reverse=True)))
-        exit(1)
+        print("Default: " + str(connections_with_load))
+        print("Sorted: " + str(sorted(connections_with_load, key=itemgetter(1), reverse=True)))
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
             connections.append(connection)
