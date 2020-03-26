@@ -27,6 +27,7 @@ def send_to_socket(host,msg):
         except (socket.timeout):
             return False
         else:
+            print("snd: "+str(msg))
             print(str(data[0]))
     finally:
         s.close()
