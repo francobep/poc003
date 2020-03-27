@@ -107,11 +107,11 @@ def get_connections(host):
             line = line.split(' ')
             id = str(line[0]).replace(":","")
             print(str(id))
-            exit(1)
-
             traffic = get_traffic(host,id)
             connections.append([id,traffic])
             i = i + 1
+    print(connections)
+    exit(1)
     return connections
 
 # Elimina una sesion pasando ID. 
