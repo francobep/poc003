@@ -273,6 +273,10 @@ def tcp_sessions_and_load():
 if __name__ == "__main__":
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
     logger = logging.getLogger('simple_example')
     logger.addHandler(ch)
+
+    
     send_to_socket("192.168.15.84", "show sess")
