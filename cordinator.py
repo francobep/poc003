@@ -17,21 +17,15 @@ logger.setLevel(logging.DEBUG)
 # create console handler and set level to debug
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
-
-# create formatter
 formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
-
-# add formatter to ch
 ch.setFormatter(formatter)
-
-# add ch to logger
 logger.addHandler(ch)
 
 #sendsocket
 def send_to_socket(host,msg):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(0.1)
+        s.settimeout(3)
         s.connect((host, 9999))
         s.send(six.b(msg + '\n'))
         file_handle = s.makefile()
@@ -48,10 +42,6 @@ def send_to_socket(host,msg):
             return data
     finally:
         s.close()
-
-        
-
-
 
 # Retorna segundo valor
 def sortSecond(val): 
