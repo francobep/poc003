@@ -28,8 +28,8 @@ def send_to_socket(host,msg):
         except (socket.timeout):
             return False
         else:
-            logging.error(("snd: "+str(msg)))
-            logging.error(str(data))
+            logging.debug(("snd: "+str(msg)))
+            logging.debug(str(data))
     finally:
         s.close()
         exit(1)
@@ -272,6 +272,7 @@ def tcp_sessions_and_load():
 
 if __name__ == "__main__":
     ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
     logger = logging.getLogger('simple_example')
     logger.addHandler(ch)
     send_to_socket("192.168.15.84", "show sess")
