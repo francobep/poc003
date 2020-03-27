@@ -19,8 +19,9 @@ formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-#sendsocket
-def send_to_socket(host,msg):
+
+# send socket
+def send_to_socket(host, msg):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(3)
@@ -35,22 +36,19 @@ def send_to_socket(host,msg):
         except (socket.timeout):
             return False
         else:
-            logger.debug(("snd: "+str(msg)))
-            logger.debug("data:"+str(data))
+            logger.debug(("snd: " + str(msg)))
+            logger.debug("data:" + str(data))
             return data
     finally:
         s.close()
 
-# Retorna segundo valor
-def sortSecond(val): 
-    return val[1] 
 
-# Retorna IP de endpoints del servicio wazuh-workers
+# retorna IP de endpoints del servicio wazuh-workers
 def get_workers_k8s_api():
     config.load_incluster_config()
     v1 = client.CoreV1Api()
     try:
-        endpoints = v1.list_namespaced_endpoints('wazuh') #TODO:Get NAMESPACE POD
+        endpoints = v1.list_namespaced_endpoints('wazuh')  # TODO:Get NAMESPACE POD
         workers = []
         for endpoint in endpoints.items:
             if endpoint.metadata.name == 'wazuh-workers':
@@ -64,11 +62,12 @@ def get_workers_k8s_api():
         exit(1)
     return workers
 
+
 # Retorna lista de IP de workers del servicio API de Wazuh
 def get_workers_wazuh_api():
-    namespace = 'wazuh' #TODO:Get NAMESPACE POD
+    namespace = 'wazuh'  # TODO:Get NAMESPACE POD
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
-    auth = requests.auth.HTTPBasicAuth('foo', 'bar') #TODO Get API Credentials
+    auth = requests.auth.HTTPBasicAuth('foo', 'bar')  # TODO Get API Credentials
     verify = False
     requests.packages.urllib3.disable_warnings()
     workers = []
@@ -79,42 +78,45 @@ def get_workers_wazuh_api():
     items = json['data']['items']
     for worker in items:
         type = worker['type']
-        if  type == "worker":
+        if type == "worker":
             workers.append(worker['ip'])
     print("Total Workers from Wazuh API: " + str(len(workers)))
     return workers
 
+
 # Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
 def get_traffic(host, connection):
     traffic = 0
-    rdata = send_to_socket(host,"show sess " + connection)
+    rdata = send_to_socket(host, "show sess " + connection)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
     for total in rawtotals:
         tbytes = int(total.replace("total=", ""))
         traffic = traffic + tbytes
     return traffic
 
+
 # Retorna lista de conexiones,trafico de un worker
 def get_connections(host):
     connections = []
-    rdata = send_to_socket(host,"show sess")
+    rdata = send_to_socket(host, "show sess")
     datalength = len(rdata) - 1
-    print("Conections: "+ str(datalength))
+    print("Conections: " + str(datalength))
     i = 0
     connections = []
     for line in rdata:
         if datalength > i:
             line = line.split(' ')
-            id = str(line[0]).replace(":","")
+            id = str(line[0]).replace(":", "")
             print(str(id))
-            traffic = get_traffic(host,id)
-            connections.append([id,traffic])
+            traffic = get_traffic(host, id)
+            connections.append([id, traffic])
             i = i + 1
     print(connections)
     exit(1)
     return connections
 
-# Elimina una sesion pasando ID. 
+
+# Elimina una sesion pasando ID.
 def shudown_session(host, connection):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, 9999))
@@ -124,6 +126,7 @@ def shudown_session(host, connection):
         s.sendall(payload)
         rbytes = s.recv(40960)
         s.close()
+
 
 # Establece el estado de un worker ( via HAPROXY )
 def set_server_state(host, state):
@@ -139,6 +142,7 @@ def set_server_state(host, state):
     else:
         print("State no supported. Exiting...")
         exit(1)
+
 
 # Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers
 def tcp_sessions():
@@ -164,14 +168,14 @@ def tcp_sessions():
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
             connections.append(connection)
-        worker_with_conn.append([worker,connections])
+        worker_with_conn.append([worker, connections])
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
 
-    fixed_workers_conn = round( total_connections / total_workers)
+    fixed_workers_conn = round(total_connections / total_workers)
     print("Total connections: " + str(total_connections))
     print("Fixed connections per worker: " + str(fixed_workers_conn))
-    #Minimum connections
+    # Minimum connections
     if fixed_workers_conn < 1:
         print('Skipping "no_min_conn"')
         return 'no_min_conn'
@@ -186,10 +190,10 @@ def tcp_sessions():
             wait = True
             conn2kill = worker_connections - fixed_workers_conn
             i = 0
-            set_server_state(worker,"drain")
+            set_server_state(worker, "drain")
             for conn in connections:
-                if conn2kill != i :
-                    shudown_session(worker,conn)
+                if conn2kill != i:
+                    shudown_session(worker, conn)
                     i = i + 1
 
     if wait:
@@ -197,9 +201,10 @@ def tcp_sessions():
         sleep(60)
         for worker in worker_with_conn:
             worker = worker[0]
-            set_server_state(worker,"ready")
+            set_server_state(worker, "ready")
     else:
         print("Nothing to do, bye...")
+
 
 # Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers, ordenando sesiones por trafico.
 def tcp_sessions_and_load():
@@ -225,11 +230,11 @@ def tcp_sessions_and_load():
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
             connections.append(connection)
-        worker_with_conn.append([worker,connections])
+        worker_with_conn.append([worker, connections])
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
 
-    fixed_workers_conn = round( total_connections / total_workers)
+    fixed_workers_conn = round(total_connections / total_workers)
     print("Total connections: " + str(total_connections))
     print("Fixed connections per worker: " + str(fixed_workers_conn))
     if fixed_workers_conn < 1:
@@ -246,24 +251,23 @@ def tcp_sessions_and_load():
             wait = True
             conn2kill = worker_connections - fixed_workers_conn
             i = 0
-            set_server_state(worker,"drain")
+            set_server_state(worker, "drain")
             for conn in connections:
                 # Mata posiciones impares.
-                if conn2kill != i and i % 2 != 0 : 
-                    shudown_session(worker,conn)
+                if conn2kill != i and i % 2 != 0:
+                    shudown_session(worker, conn)
                     i = i + 1
 
                     ###pesos 
-    
+
     if wait:
         print("Waiting 300s to renew connections...")
         sleep(300)
         for worker in worker_with_conn:
             worker = worker[0]
-            set_server_state(worker,"ready")
+            set_server_state(worker, "ready")
     else:
         print("Nothing to do, bye...")
-
 
 
 if __name__ == "__main__":
