@@ -98,9 +98,10 @@ def get_traffic(host, connection):
 def get_connections(host):
     connections = []
     rdata = send_to_socket(host,"show sess")
-    data = str(rdata[0]).replace(":","").split(" ")
-    print(str(data[0]))
+    print(str(rdata))
     exit(1)
+    data = str(rdata[0]).replace(":","")
+    
     datalength = len(data) - 1
     print("Conections: "+ str(datalength))
     i = 0
