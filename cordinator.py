@@ -267,5 +267,4 @@ def tcp_sessions_and_load():
 
 
 if __name__ == "__main__":
-    data = send_to_socket("192.168.15.84", "show sess")
-    print("output: "+str(data))
+    tcp_sessions()
