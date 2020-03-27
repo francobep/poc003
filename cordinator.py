@@ -43,8 +43,8 @@ def send_to_socket(host,msg):
         except (socket.timeout):
             return False
         else:
-            logging.debug(("snd: "+str(msg)))
-            logging.debug(str(data))
+            logger.debug(("snd: "+str(msg)))
+            logger.debug(str(data))
     finally:
         s.close()
         exit(1)
