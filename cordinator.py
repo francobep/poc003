@@ -99,7 +99,7 @@ def get_connections(host):
     connections = []
     rdata = send_to_socket(host,"show sess")
     data = str(rdata[0]).replace(":","").split(" ")
-    print(str(data))
+    print(str(data[0]))
     exit(1)
     datalength = len(data) - 1
     print("Conections: "+ str(datalength))
