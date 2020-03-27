@@ -36,7 +36,7 @@ def send_to_socket(host,msg):
             return False
         else:
             logger.debug(("snd: "+str(msg)))
-            logger.debug(str(data))
+            logger.debug("data:"+str(data))
             return data
     finally:
         s.close()
