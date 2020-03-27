@@ -11,10 +11,8 @@ from kubernetes import client, config
 from time import sleep
 from operator import itemgetter
 
-logger = logging.getLogger('simple_example')
+logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-
-# create console handler and set level to debug
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
