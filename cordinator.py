@@ -87,40 +87,31 @@ def get_workers_wazuh_api():
 # Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
 def get_traffic(host, connection):
     traffic = 0
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((host, 9999))
-        payload = 'show sess ' + connection + '\n'
-        s.sendall(bytes(payload.encode()))
-        rbytes = s.recv(40960)
-        s.close()
-        rawtotals = re.findall(r"(total=\d+)", str(rbytes))
-        for total in rawtotals:
-            tbytes = int(total.replace("total=", ""))
-            traffic = traffic + tbytes
+    rdata = send_to_socket("show sess " + connection)
+    rawtotals = re.findall(r"(total=\d+)", str(rdata))
+    for total in rawtotals:
+        tbytes = int(total.replace("total=", ""))
+        traffic = traffic + tbytes
     return traffic
 
 # Retorna lista de conexiones,trafico de un worker
 def get_connections(host):
     connections = []
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((host, 9999))
-        payload = 'show sess\n'
-        s.sendall(bytes(payload.encode()))
-        s.connect((host, 9999))
-        rbytes = s.recv(409600)
-        s.close()
-        data = str(rbytes).replace("b'", "").replace("'", "").replace(':','').replace('\\n\\n', '').split('\\n')
-        datalength = len(data) - 1
-        print("Conections: "+ str(datalength))
-        i = 0
-        connections = []
-        for line in data:
-            if datalength > i:
-                line = line.split(' ')
-                id = line[0]
-                traffic = get_traffic(host,id)
-                connections.append([id,traffic])
-                i = i + 1
+    rdata = send_to_socket("show sess")
+    print(str(rdata[0]))
+    exit(1)
+    data = str(rdata).replace("b'", "").replace("'", "").replace(':','').replace('\\n\\n', '').split('\\n')
+    datalength = len(data) - 1
+    print("Conections: "+ str(datalength))
+    i = 0
+    connections = []
+    for line in data:
+        if datalength > i:
+            line = line.split(' ')
+            id = line[0]
+            traffic = get_traffic(host,id)
+            connections.append([id,traffic])
+            i = i + 1
     return connections
 
 # Elimina una sesion pasando ID. 
