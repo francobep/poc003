@@ -45,9 +45,11 @@ def send_to_socket(host,msg):
         else:
             logger.debug(("snd: "+str(msg)))
             logger.debug(str(data))
+            return data
     finally:
         s.close()
-        exit(1)
+
+        
 
 
 
@@ -286,4 +288,5 @@ def tcp_sessions_and_load():
 
 
 if __name__ == "__main__":
-    send_to_socket("192.168.15.84", "show sess")
+    data = send_to_socket("192.168.15.84", "show sess")
+    print(str(data))
