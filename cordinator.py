@@ -97,7 +97,7 @@ def get_traffic(host, connection):
 # Retorna lista de conexiones,trafico de un worker
 def get_connections(host):
     connections = []
-    rdata = send_to_socket("show sess")
+    rdata = send_to_socket(host,"show sess")
     print(str(rdata[0]))
     exit(1)
     data = str(rdata).replace("b'", "").replace("'", "").replace(':','').replace('\\n\\n', '').split('\\n')
