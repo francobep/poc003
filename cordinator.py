@@ -36,8 +36,8 @@ def send_to_socket(host, msg):
         except (socket.timeout):
             return False
         else:
-            logger.debug(("snd: " + str(msg)))
-            logger.debug("data:" + str(data))
+            logger.debug(("MESSAGE SENT TO SOCKET: " + str(msg)))
+            logger.debug("DATE RECEIVE FROM SOCKET:" + str(data))
             return data
     finally:
         s.close()
@@ -48,7 +48,7 @@ def get_workers_k8s_api():
     config.load_incluster_config()
     v1 = client.CoreV1Api()
     try:
-        endpoints = v1.list_namespaced_endpoints('wazuh')  # TODO:Get NAMESPACE POD
+        endpoints = v1.list_namespaced_endpoints("wazuh")  # TODO:Get NAMESPACE POD
         workers = []
         for endpoint in endpoints.items:
             if endpoint.metadata.name == 'wazuh-workers':
@@ -144,7 +144,11 @@ def set_server_state(host, state):
         exit(1)
 
 
-# Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers
+'''
+Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
+'''
+
+
 def tcp_sessions():
     worker_with_conn = []
     total_connections = 0

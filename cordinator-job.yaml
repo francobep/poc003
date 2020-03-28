@@ -13,7 +13,7 @@ spec:
     spec:
       priorityClassName: system-cluster-critical
   containers:
-  - name: cordinator
-    image: python:3.6-alpine3.10
-    command: ["/bin/ash", "-ec", "while :; do echo '.'; sleep 5 ; done"]
+    - name: cordinator
+      image: python:3.6-alpine3.10
+      command: ["/bin/ash", "-ec", "while :; do echo '.'; sleep 5 ; done"]
   serviceAccountName: cordinator
