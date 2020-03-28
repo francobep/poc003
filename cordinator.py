@@ -3,8 +3,6 @@
 import socket
 import requests
 import re
-import os
-import json
 import six
 import logging
 from kubernetes import client, config
