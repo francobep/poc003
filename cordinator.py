@@ -34,8 +34,8 @@ def send_to_socket(host, msg):
         except socket.timeout:
             return False
         else:
-            logger.debug(("MESSAGE SENT TO SOCKET: " + str(msg)))
-            logger.debug("DATE RECEIVE FROM SOCKET:" + str(data))
+            logger.debug(("MESSAGE SENT TO SOCKET: " + "HOST: " + host + str(msg)))
+            logger.debug("DATE RECEIVE FROM SOCKET:" + "HOST: " + host + str(data))
             return data
     finally:
         s.close()
@@ -66,7 +66,6 @@ def get_workers_wazuh_api():
     namespace = 'wazuh'  # TODO:Get NAMESPACE POD
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
     auth = requests.auth.HTTPBasicAuth('foo', 'bar')  # TODO Get API Credentials
-    verify = False
     requests.packages.urllib3.disable_warnings()
     workers = []
     # Request
