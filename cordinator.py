@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-import socket
-import requests
-import re
-import six
 import logging
-from kubernetes import client, config
+import re
+import socket
 from time import sleep
-from operator import itemgetter
+
+import requests
+import six
+from kubernetes import client, config
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -26,12 +26,12 @@ def send_to_socket(host, msg):
         s.connect((host, 9999))
         s.send(six.b(msg + '\n'))
         file_handle = s.makefile()
-    except (socket.timeout):
+    except socket.timeout:
         return False
     else:
         try:
             data = file_handle.read().splitlines()
-        except (socket.timeout):
+        except socket.timeout:
             return False
         else:
             logger.debug(("MESSAGE SENT TO SOCKET: " + str(msg)))
