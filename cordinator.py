@@ -18,10 +18,11 @@ formatter = logging.Formatter('[%(asctime)s] %(pathname)s:%(lineno)d %(funcName)
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-
 '''
 send socket
 '''
+
+
 def sendto_socket(host, msg):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,6 +49,8 @@ def sendto_socket(host, msg):
 '''
 retorna IP de endpoints del servicio wazuh-workers
 '''
+
+
 def get_workers_k8s_api():
     config.load_incluster_config()
     v1 = client.CoreV1Api()
@@ -66,9 +69,12 @@ def get_workers_k8s_api():
         exit(1)
     return workers
 
+
 '''
 Retorna lista de IP de workers del servicio API de Wazuh
 '''
+
+
 def get_workers_wazuh_api():
     namespace = 'wazuh'  # TODO:Get NAMESPACE POD
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
@@ -91,6 +97,8 @@ def get_workers_wazuh_api():
 '''
 Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
 '''
+
+
 def get_traffic(host, id):
     traffic = 0
     logger.debug("Getting connection traffic " + host + ":9999:" + id)
@@ -105,9 +113,12 @@ def get_traffic(host, id):
         traffic = traffic + tbytes
     return traffic
 
+
 '''
 Retorna lista de conexiones,trafico de un worker
 '''
+
+
 def get_connections(host):
     logger.info("Getting current agents TCP connections from HAP")
     rdata = sendto_socket(host, "show sess")
@@ -128,9 +139,12 @@ def get_connections(host):
     exit(1)
     return connections
 
+
 '''
 Elimina una sesion pasando ID.
 '''
+
+
 def shudown_session(host, connection):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((host, 9999))
@@ -141,9 +155,12 @@ def shudown_session(host, connection):
         rbytes = s.recv(40960)
         s.close()
 
+
 '''
 Establece el estado de un worker ( via HAPROXY )
 '''
+
+
 def set_server_state(host, state):
     if state == "ready" or state == "drain" or state == "maint":
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
