@@ -95,6 +95,7 @@ def get_traffic(host, connection):
 
 # Retorna lista de conexiones,trafico de un worker
 def get_connections(host):
+    logger.info("Getting current connections from HAPROXY Runtime API")
     rdata = send_to_socket(host, "show sess")
     datalength = len(rdata) - 1
     print("Conections: " + str(datalength))
