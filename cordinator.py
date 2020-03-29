@@ -230,20 +230,25 @@ def tcp_sessions():
     if fixed_workers_conn < 1:
         logger.error('Skipping "no_min_conn"')
         return False
-        exit()
 
     wait = False
     for worker in worker_with_conn:
         connections = worker[1]
         worker = worker[0]
         worker_connections = len(connections)
+        logger.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
+        logger.info("Analyzing if is needed shutdown sessions...")
         if worker_connections > fixed_workers_conn + 1:
+            logger.info("Go to shutdown sessions...")
             wait = True
             conn2kill = worker_connections - fixed_workers_conn
+            logger.debug("Sessions to kill => " + str(conn2kill))
             i = 0
+            logger.debug("Set HAP in DRAIN mode => " + worker)
             set_server_state(worker, "drain")
             for conn in connections:
                 if conn2kill != i:
+                    logger.debug("Shutting down connection =>" + worker + ":" + conn)
                     shudown_session(worker, conn)
                     i = i + 1
 
