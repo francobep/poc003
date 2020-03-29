@@ -9,9 +9,9 @@ from time import sleep
 from kubernetes import client, config
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
-ch.setLevel(logging.INFO)
+ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(pathname)s:%(lineno)d %(funcName)s - %(message)s',
                               '%m-%d %H:%M:%S')
 ch.setFormatter(formatter)
@@ -248,7 +248,7 @@ def tcp_sessions():
             set_server_state(worker, "drain")
             for conn in connections:
                 if conn2kill != i:
-                    logger.debug("Shutting down connection =>" + worker + ":" + conn)
+                    logger.debug("Shutting down connection =>" + worker + ":" +π conn)
                     shudown_session(worker, conn)
                     i = i + 1
 
