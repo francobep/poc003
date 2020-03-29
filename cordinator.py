@@ -64,10 +64,11 @@ def get_workers_k8s_api():
                 for ip in ips:
                     workers.append(ip.ip)
         print("Total Workers from K8s API: " + str(len(workers)))
+        return workers
     except Exception as e:
         print(str(e))
         exit(1)
-    return workers
+
 
 
 '''
@@ -76,6 +77,7 @@ Retorna lista de IP de workers del servicio API de Wazuh
 
 
 def get_workers_wazuh_api():
+    logger.info("Getting workers from Wazuh API")
     namespace = 'wazuh'  # TODO:Get NAMESPACE POD
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
     auth = requests.auth.HTTPBasicAuth('foo', 'bar')  # TODO Get API Credentials
@@ -84,13 +86,14 @@ def get_workers_wazuh_api():
     # Request
     url = '{0}{1}'.format(base_url, "/cluster/nodes")
     r = requests.get(url, auth=auth, params=None, verify=False)
-    json = r.json()
-    items = json['data']['items']
+    response = r.json()
+    items = response['data']['items']
     for worker in items:
         type = worker['type']
         if type == "worker":
             workers.append(worker['ip'])
-    print("Total Workers from Wazuh API: " + str(len(workers)))
+            logger.debug("Found Worker " + str(worker['ip']))
+    logger.info("Total Workers from Wazuh API: " + str(len(workers)))
     return workers
 
 
@@ -152,7 +155,6 @@ def shudown_session(host, connection):
         payload = payload.encode()
         print(payload)
         s.sendall(payload)
-        rbytes = s.recv(40960)
         s.close()
 
 
@@ -169,7 +171,6 @@ def set_server_state(host, state):
             payload = payload.encode()
             print(payload)
             s.sendall(payload)
-            rbytes = s.recv(40960)
             s.close()
     else:
         print("State no supported. Exiting...")
@@ -182,6 +183,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 
 
 def tcp_sessions():
+    logger.info("Starting balancing Wazuh Agents via TCP")
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
@@ -215,7 +217,7 @@ def tcp_sessions():
     if fixed_workers_conn < 1:
         print('Skipping "no_min_conn"')
         return 'no_min_conn'
-        exit(0)
+        exit()
 
     wait = False
     for worker in worker_with_conn:
