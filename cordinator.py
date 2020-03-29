@@ -255,13 +255,13 @@ def tcp_sessions():
             logger.info("Isn't needed shutdown sessions in Worker " + worker)
 
     if wait:
-        print("Waiting 60s to renew connections...")
+        logger.info("Waiting 60s to renew connections...")
         sleep(60)
         for worker in worker_with_conn:
             worker = worker[0]
             set_server_state(worker, "ready")
     else:
-        print("Nothing to do, bye...")
+        logger.info("Nothing to do, bye...")
 
 
 if __name__ == "__main__":
