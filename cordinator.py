@@ -65,8 +65,8 @@ def get_workers_k8s_api():
                 for ip in ips:
                     workerip = ip.ip
                     workers.append(workerip)
-                    logger.debug("Found Worker " + str(workerip))
-        logger.info("Total Workers from K8s API: " + str(len(workers)))
+                    logger.debug("Found Worker from K8's API = " + str(workerip))
+        logger.info("Total Workers from K8s API = " + str(len(workers)))
         return workers
     except Exception as e:
         logger.error(e)
@@ -100,7 +100,7 @@ def get_workers_wazuh_api():
             wazuhtype = worker['type']
             if wazuhtype == "worker":
                 workers.append(worker['ip'])
-                logger.debug("Found Worker " + str(worker['ip']))
+                logger.debug("Found Worker from Wazuh API = " + str(worker['ip']))
         logger.info("Total Workers from Wazuh API: " + str(len(workers)))
         return workers
 
