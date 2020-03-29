@@ -12,7 +12,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
-formatter = logging.Formatter('[%(asctime)s] %(pathname)s:%(lineno)d %(funcName)s %(levelname)s - %(message)s',
+formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(pathname)s:%(lineno)d %(funcName)s - %(message)s',
                               '%m-%d %H:%M:%S')
 ch.setFormatter(formatter)
 logger.addHandler(ch)
