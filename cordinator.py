@@ -89,7 +89,11 @@ def get_traffic(host, id):
     rdata = send_to_socket(host, "show sess " + id)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
     for total in rawtotals:
-        logger.debug("Getting connection traffic [inbound,outbound] " + host + ":9999:" + id + " " + str(total))
+        if traffic == 0:
+            logger.debug("Getting connection traffic [inbound,outbound] " + host + ":9999:" + id + " inbound " + str(total))
+        else:
+            logger.debug(
+                "Getting connection traffic [inbound,outbound] " + host + ":9999:" + id + " outbound " + str(total))
         tbytes = int(total.replace("total=", ""))
         traffic = traffic + tbytes
     return traffic
