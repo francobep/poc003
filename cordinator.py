@@ -85,7 +85,6 @@ def get_workers_wazuh_api():
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
     auth = requests.auth.HTTPBasicAuth('foo', 'bar')  # TODO Get API Credentials
     requests.packages.urllib3.disable_warnings()
-    requests.HTTPConnection.debuglevel=1
     workers = []
     # Request
     url = '{0}{1}'.format(base_url, "/cluster/nodes")
