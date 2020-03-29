@@ -85,16 +85,21 @@ def get_workers_wazuh_api():
     workers = []
     # Request
     url = '{0}{1}'.format(base_url, "/cluster/nodes")
-    r = requests.get(url, auth=auth, params=None, verify=False)
-    response = r.json()
-    items = response['data']['items']
-    for worker in items:
-        type = worker['type']
-        if type == "worker":
-            workers.append(worker['ip'])
-            logger.debug("Found Worker " + str(worker['ip']))
-    logger.info("Total Workers from Wazuh API: " + str(len(workers)))
-    return workers
+    try:
+        r = requests.get(url, auth=auth, params=None, verify=False)
+        response = r.json()
+    except requests.exceptions as e:
+        logger.error(e)
+        return False
+    else:
+        items = response['data']['items']
+        for worker in items:
+            type = worker['type']
+            if type == "worker":
+                workers.append(worker['ip'])
+                logger.debug("Found Worker " + str(worker['ip']))
+        logger.info("Total Workers from Wazuh API: " + str(len(workers)))
+        return workers
 
 
 '''
