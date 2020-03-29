@@ -90,7 +90,7 @@ def get_traffic(host, id):
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
     for total in rawtotals:
         if traffic == 0:
-            logger.debug("Connection traffic inbound" + host + ":9999:" + id + " " + str(total))
+            logger.debug("Connection traffic inbound " + host + ":9999:" + id + " " + str(total))
         else:
             logger.debug(
                 "Connection traffic outbound " + host + ":9999:" + id + " " + str(total))
