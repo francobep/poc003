@@ -212,7 +212,7 @@ def tcp_sessions():
 
     for worker in workers:
         connections = []
-        logger.info("Counting connections on Worker " + worker)
+        logger.info("Counting agents on Worker " + worker)
         connections_with_load = get_connections(worker)
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
