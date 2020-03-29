@@ -34,6 +34,7 @@ def send_to_socket(host, msg):
         except socket.timeout:
             return False
         else:
+            logger.info("Sending MSG to HAPROXY Runtime API")
             logger.debug(("sent to " + host + ":9999 " + str(msg)))
             logger.debug("data from " + host + " " + str(data))
             return data
