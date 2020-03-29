@@ -248,7 +248,7 @@ def tcp_sessions():
             set_server_state(worker, "drain")
             for conn in connections:
                 if conn2kill != i:
-                    logger.debug("Shutting down connection =>" + worker + ":" +π conn)
+                    logger.debug("Shutting down connection =>" + worker + ":" + conn)
                     shudown_session(worker, conn)
                     i = i + 1
 
