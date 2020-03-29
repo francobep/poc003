@@ -13,10 +13,10 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('[%(asctime)s] %(pathname)s:%(lineno)d %(funcName)s %(levelname)s - %(message)s','%m-%d %H:%M:%S')
+formatter = logging.Formatter('[%(asctime)s] %(pathname)s:%(lineno)d %(funcName)s %(levelname)s - %(message)s',
+                              '%m-%d %H:%M:%S')
 ch.setFormatter(formatter)
 logger.addHandler(ch)
-
 
 
 # send socket
@@ -208,70 +208,6 @@ def tcp_sessions():
     if wait:
         print("Waiting 60s to renew connections...")
         sleep(60)
-        for worker in worker_with_conn:
-            worker = worker[0]
-            set_server_state(worker, "ready")
-    else:
-        print("Nothing to do, bye...")
-
-
-# Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers, ordenando sesiones por trafico.
-def tcp_sessions_and_load():
-    worker_with_conn = []
-    total_connections = 0
-    total_workers = 0
-    workers = get_workers_wazuh_api()
-    w_from_k8s = len(get_workers_k8s_api())
-    w_from_wazuh = len(workers)
-
-    retry = 0
-    while w_from_k8s != w_from_wazuh:
-        print('Workers does not match, retrying...')
-        sleep(5)
-        retry = retry + 1
-        if retry > 5:
-            print('Workers does not match, exiting...')
-            exit(0)
-
-    for worker in workers:
-        connections = []
-        connections_with_load = get_connections(worker)
-        for connection_with_load in connections_with_load:
-            connection = connection_with_load[0]
-            connections.append(connection)
-        worker_with_conn.append([worker, connections])
-        total_connections = total_connections + len(connections)
-        total_workers = total_workers + 1
-
-    fixed_workers_conn = round(total_connections / total_workers)
-    print("Total connections: " + str(total_connections))
-    print("Fixed connections per worker: " + str(fixed_workers_conn))
-    if fixed_workers_conn < 1:
-        print('Skipping "no_min_conn"')
-        return 'no_min_conn'
-        exit(0)
-
-    wait = False
-    for worker in worker_with_conn:
-        connections = worker[1]
-        worker = worker[0]
-        worker_connections = len(connections)
-        if worker_connections > fixed_workers_conn + 1:
-            wait = True
-            conn2kill = worker_connections - fixed_workers_conn
-            i = 0
-            set_server_state(worker, "drain")
-            for conn in connections:
-                # Mata posiciones impares.
-                if conn2kill != i and i % 2 != 0:
-                    shudown_session(worker, conn)
-                    i = i + 1
-
-                    ###pesos 
-
-    if wait:
-        print("Waiting 300s to renew connections...")
-        sleep(300)
         for worker in worker_with_conn:
             worker = worker[0]
             set_server_state(worker, "ready")
