@@ -105,8 +105,8 @@ def get_connections(host):
     for line in rdata:
         if datalength > i:
             line = line.split(' ')
-            logger.debug("Getting connection ID " + id)
             id = str(line[0]).replace(":", "")
+            logger.debug("Getting connection ID " + id)
             logger.debug("Getting connection traffic " + host + ":9999:" + id )
             traffic = get_traffic(host, id)
             connections.append([id, traffic])
