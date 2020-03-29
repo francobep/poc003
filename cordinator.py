@@ -9,9 +9,9 @@ from time import sleep
 from kubernetes import client, config
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+ch.setLevel(logging.INFO)
 formatter = logging.Formatter('[%(asctime)s] %(pathname)s:%(lineno)d %(funcName)s %(levelname)s - %(message)s',
                               '%m-%d %H:%M:%S')
 ch.setFormatter(formatter)
@@ -220,12 +220,12 @@ def tcp_sessions():
         total_workers = total_workers + 1
 
     fixed_workers_conn = round(total_connections / total_workers)
-    print("Total connections: " + str(total_connections))
-    print("Fixed connections per worker: " + str(fixed_workers_conn))
+    logger.info("Total connections: " + str(total_connections))
+    logger.info("Fixed connections per worker: " + str(fixed_workers_conn))
     # Minimum connections
     if fixed_workers_conn < 1:
-        print('Skipping "no_min_conn"')
-        return 'no_min_conn'
+        logger.error('Skipping "no_min_conn"')
+        return False
         exit()
 
     wait = False
