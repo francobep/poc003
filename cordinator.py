@@ -22,7 +22,7 @@ logger.addHandler(ch)
 '''
 send socket
 '''
-def send_to_socket(host, msg):
+def sendto_socket(host, msg):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(3)
@@ -94,7 +94,7 @@ Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
 def get_traffic(host, id):
     traffic = 0
     logger.debug("Getting connection traffic " + host + ":9999:" + id)
-    rdata = send_to_socket(host, "show sess " + id)
+    rdata = sendto_socket(host, "show sess " + id)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
     for total in rawtotals:
         if traffic == 0:
@@ -110,7 +110,7 @@ Retorna lista de conexiones,trafico de un worker
 '''
 def get_connections(host):
     logger.info("Getting current agents TCP connections from HAP")
-    rdata = send_to_socket(host, "show sess")
+    rdata = sendto_socket(host, "show sess")
     datalength = len(rdata) - 1
     logger.info("Current TCP agent connections = " + str(datalength))
     i = 0
