@@ -109,16 +109,16 @@ Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
 '''
 
 
-def get_traffic(host, id):
+def get_traffic(host, conn_id):
     traffic = 0
-    logger.debug("Getting connection traffic " + host + ":9999:" + id)
-    rdata = sendto_socket(host, "show sess " + id)
+    logger.debug("Getting connection traffic " + host + ":9999:" + conn_id)
+    rdata = sendto_socket(host, "show sess " + conn_id)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
     for total in rawtotals:
         if traffic == 0:
-            logger.debug("Connection " + host + ":9999:" + id + " bytes inbound " + str(total))
+            logger.debug("Connection " + host + ":9999:" + conn_id + " bytes inbound " + str(total))
         else:
-            logger.debug("Connection " + host + ":9999:" + id + " bytes outbound " + str(total))
+            logger.debug("Connection " + host + ":9999:" + conn_id + " bytes outbound " + str(total))
         tbytes = int(total.replace("total=", ""))
         traffic = traffic + tbytes
     return traffic
@@ -140,10 +140,10 @@ def get_connections(host):
     for line in rdata:
         if datalength > i:
             line = line.split(' ')
-            id = str(line[0]).replace(":", "")
-            logger.debug("Getting connection ID " + id)
-            traffic = get_traffic(host, id)
-            connections.append([id, traffic])
+            conn_id = str(line[0]).replace(":", "")
+            logger.debug("Getting connection ID " + conn_id)
+            traffic = get_traffic(host, conn_id)
+            connections.append([conn_id, traffic])
             i = i + 1
     logger.debug("Current [connections,traffic] from " + host + ":9999 " + str(connections))
     exit(1)
