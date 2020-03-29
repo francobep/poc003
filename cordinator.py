@@ -106,7 +106,7 @@ def get_connections(host):
         if datalength > i:
             line = line.split(' ')
             id = str(line[0]).replace(":", "")
-            logger.debug("Getting connection traffic :" + host + ":9999:" + id )
+            logger.debug("Getting connection traffic " + host + ":9999:" + id )
             traffic = get_traffic(host, id)
             connections.append([id, traffic])
             i = i + 1
