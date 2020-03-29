@@ -73,7 +73,6 @@ def get_workers_k8s_api():
         return False
 
 
-
 '''
 Retorna lista de IP de workers del servicio API de Wazuh
 '''
