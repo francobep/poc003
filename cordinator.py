@@ -34,7 +34,7 @@ def send_to_socket(host, msg):
         except socket.timeout:
             return False
         else:
-            logger.info("Sending MSG to HAPROXY Runtime API")
+            logger.info("Sending MSG to HAP Runtime API")
             logger.debug(("sent to " + host + ":9999 " + str(msg)))
             logger.debug("data from " + host + " " + str(data))
             return data
@@ -95,7 +95,7 @@ def get_traffic(host, connection):
 
 # Retorna lista de conexiones,trafico de un worker
 def get_connections(host):
-    logger.info("Getting current connections from HAPROXY Runtime API")
+    logger.info("Getting current agents TCP connections from HAP")
     rdata = send_to_socket(host, "show sess")
     datalength = len(rdata) - 1
     print("Conections: " + str(datalength))
