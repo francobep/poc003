@@ -251,6 +251,8 @@ def tcp_sessions():
                     logger.debug("Shutting down connection =>" + worker + ":" + conn)
                     shudown_session(worker, conn)
                     i = i + 1
+        else:
+            logger.info("Isn't needed shutdown sessions in Worker " + worker)
 
     if wait:
         print("Waiting 60s to renew connections...")
