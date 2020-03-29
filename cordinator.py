@@ -98,7 +98,7 @@ def get_connections(host):
     logger.info("Getting current agents TCP connections from HAP")
     rdata = send_to_socket(host, "show sess")
     datalength = len(rdata) - 1
-    print("Conections: " + str(datalength))
+    logger.info("Current agents TCP connections = " + str(datalength))
     i = 0
     connections = []
     for line in rdata:
