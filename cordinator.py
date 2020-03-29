@@ -34,8 +34,8 @@ def send_to_socket(host, msg):
         except socket.timeout:
             return False
         else:
-            logger.debug(("MESSAGE SENT TO SOCKET: " + "HOST: " + host + str(msg)))
-            logger.debug("DATE RECEIVE FROM SOCKET: " + "HOST: " + host + str(data))
+            logger.debug(("MESSAGE SENT TO HOST:SOCKET => " + host + ":" + str(msg)))
+            logger.debug("DATE RECEIVE FROM SOCKET: " + host + ":" + str(data))
             return data
     finally:
         s.close()
