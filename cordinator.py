@@ -10,6 +10,7 @@ import six
 from kubernetes import client, config
 
 logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
 formatter = logging.Formatter('[%(asctime)s] %(pathname)s:%(lineno)d %(funcName)s %(levelname)s - %(message)s','%m-%d %H:%M:%S')
