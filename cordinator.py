@@ -3,10 +3,9 @@
 import logging
 import re
 import socket
-from time import sleep
-
 import requests
 import six
+from time import sleep
 from kubernetes import client, config
 
 logger = logging.getLogger()
