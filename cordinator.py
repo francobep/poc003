@@ -101,11 +101,12 @@ def get_connections(host):
     logger.info("Current TCP agent connections = " + str(datalength))
     i = 0
     connections = []
+    logger.info("Getting Traffic from TCP agent connection")
     for line in rdata:
         if datalength > i:
             line = line.split(' ')
             id = str(line[0]).replace(":", "")
-            print(str(id))
+            logger.debug("Getting connection traffic :" + host + ":9999:" + id )
             traffic = get_traffic(host, id)
             connections.append([id, traffic])
             i = i + 1
