@@ -83,10 +83,10 @@ def get_workers_wazuh_api():
 
 
 # Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
-def get_traffic(host, connection):
+def get_traffic(host, id):
     traffic = 0
     logger.debug("Getting connection traffic " + host + ":9999:" + id)
-    rdata = send_to_socket(host, "show sess " + connection)
+    rdata = send_to_socket(host, "show sess " + id)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
     for total in rawtotals:
         logger.debug("Getting connection traffic [inbound,outbound] " + host + ":9999:" + id + " " + str(total))
