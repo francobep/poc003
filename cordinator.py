@@ -13,7 +13,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('[%(asctime)s] %(pathname)s:%(lineno)d %(levelname)s - %(message)s','%m-%d %H:%M:%S')
+formatter = logging.Formatter('[%(asctime)s] %(pathname)s:%(lineno)d %(funcName)s %(levelname)s %(message)s','%m-%d %H:%M:%S')
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
@@ -94,7 +94,6 @@ def get_traffic(host, connection):
 
 # Retorna lista de conexiones,trafico de un worker
 def get_connections(host):
-    connections = []
     rdata = send_to_socket(host, "show sess")
     datalength = len(rdata) - 1
     print("Conections: " + str(datalength))
