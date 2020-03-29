@@ -192,6 +192,7 @@ def tcp_sessions():
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
+
     workers = get_workers_wazuh_api()
     w_from_k8s = len(get_workers_k8s_api())
     w_from_wazuh = len(workers)
@@ -211,6 +212,7 @@ def tcp_sessions():
 
     for worker in workers:
         connections = []
+        logger.info("Counting connections on Worker " + worker)
         connections_with_load = get_connections(worker)
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
