@@ -98,7 +98,7 @@ def get_workers_wazuh_api():
             wazuhtype = worker['type']
             if wazuhtype == "worker":
                 workers.append(worker['ip'])
-                logger.debug("Found Worker from Wazuh API = π" + str(worker['ip']))
+                logger.debug("Found Worker from Wazuh API = " + str(worker['ip']))
         logger.info("Total Workers from Wazuh API: " + str(len(workers)))
         return workers
 
