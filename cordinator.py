@@ -223,6 +223,7 @@ def tcp_sessions():
 
     fixed_workers_conn = round(total_connections / total_workers)
     logger.info("Total connections: " + str(total_connections))
+    logger.info("Calculating Fixed connections based on total connections divide into total workers...")
     logger.info("Fixed connections per worker: " + str(fixed_workers_conn))
     # Minimum connections
     if fixed_workers_conn < 1:
