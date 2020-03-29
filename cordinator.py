@@ -132,7 +132,7 @@ def get_connections(host):
     logger.info("Getting current agents TCP connections from HAP")
     rdata = sendto_socket(host, "show sess")
     datalength = len(rdata) - 1
-    logger.info("Current TCP agent connections = " + str(datalength) + " on Worker " + host)
+    logger.info("Current TCP agent connections => " + str(datalength) + " on Worker " + host)
     i = 0
     connections = []
     logger.info("Getting Traffic from TCP agent connection")
