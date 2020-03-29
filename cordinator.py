@@ -197,6 +197,7 @@ def tcp_sessions():
     w_from_wazuh = len(workers)
 
     retry = 0
+    logger.info("Matching inventory from Wazuh and K8's API...")
     while w_from_k8s != w_from_wazuh:
         logger.warning('Workers does not match, retrying...')
         sleep(5)
