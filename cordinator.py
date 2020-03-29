@@ -35,7 +35,7 @@ def send_to_socket(host, msg):
             return False
         else:
             logger.debug(("MESSAGE SENT TO HOST:SOCKET => " + host + ":9999 => " + str(msg)))
-            logger.debug("DATE RECEIVE FROM SOCKET: " + host + " => " + str(data))
+            logger.debug("DATE RECEIVE FROM SOCKET => " + host + " => " + str(data))
             return data
     finally:
         s.close()
