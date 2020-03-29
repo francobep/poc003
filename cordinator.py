@@ -52,6 +52,7 @@ retorna IP de endpoints del servicio wazuh-workers
 
 
 def get_workers_k8s_api():
+    logger.info("Getting workers from K8's API")
     config.load_incluster_config()
     v1 = client.CoreV1Api()
     try:
@@ -62,12 +63,14 @@ def get_workers_k8s_api():
                 subsets = endpoint.subsets
                 ips = subsets[0].addresses
                 for ip in ips:
-                    workers.append(ip.ip)
-        print("Total Workers from K8s API: " + str(len(workers)))
+                    workerip = ip.ip
+                    workers.append(workerip)
+                    logger.debug("Found Worker " + str(workerip))
+        logger.info("Total Workers from K8s API: " + str(len(workers)))
         return workers
     except Exception as e:
-        print(str(e))
-        exit(1)
+        logger.error(e)
+        return False
 
 
 
