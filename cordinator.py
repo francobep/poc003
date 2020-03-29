@@ -10,9 +10,8 @@ import six
 from kubernetes import client, config
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
+ch.setLevel(logging.INFO)
 formatter = logging.Formatter('[%(asctime)s] %(pathname)s:%(lineno)d %(funcName)s %(levelname)s - %(message)s','%m-%d %H:%M:%S')
 ch.setFormatter(formatter)
 logger.addHandler(ch)
@@ -47,7 +46,7 @@ def get_workers_k8s_api():
     config.load_incluster_config()
     v1 = client.CoreV1Api()
     try:
-        endpoints = v1.list_namespaced_endpoints("wazuh")  # TODO:Get NAMESPACE POD
+        endpoints = v1.list_namespaced_endpoints("wazuh")  # TODO:Get POD NAMESPACE
         workers = []
         for endpoint in endpoints.items:
             if endpoint.metadata.name == 'wazuh-workers':
