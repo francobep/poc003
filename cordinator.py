@@ -222,7 +222,7 @@ def tcp_sessions():
         total_workers = total_workers + 1
 
     fixed_workers_conn = round(total_connections / total_workers)
-    logger.info("Total connections: " + str(total_connections))
+    logger.info("Total Connections: " + str(total_connections))
     logger.info("Total Workers: " + str(total_workers))
     logger.info("Calculating Fixed connections based on total connections divide into total workers...")
     logger.info("Fixed connections per worker: " + str(fixed_workers_conn))
