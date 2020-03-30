@@ -245,12 +245,23 @@ def tcp_sessions():
             logger.debug("Sessions to kill => " + str(conn2kill))
             i = 0
             logger.debug("Set HAP in DRAIN mode => " + worker)
-            set_server_state(worker, "drain")
-            for conn in connections:
-                if conn2kill != i:
-                    logger.debug("Shutting down connection =>" + worker + ":" + conn)
-                    shudown_session(worker, conn)
-                    i = i + 1
+            dryrunmode = False
+            if dryrunmode:
+                logger.debug("Set worker " + worker + "in to drain mode")
+                #set_server_state(worker, "drain")
+                for conn in connections:
+                    if conn2kill != i:
+                        logger.debug("Shutting down connection =>" + worker + ":" + conn)
+                        #shudown_session(worker, conn)
+                        i = i + 1
+            else:
+                logger.debug("Set worker " + worker + "in to drain mode")
+                set_server_state(worker, "drain")
+                for conn in connections:
+                    if conn2kill != i:
+                        logger.debug("Shutting down connection =>" + worker + ":" + conn)
+                        shudown_session(worker, conn)
+                        i = i + 1
         else:
             logger.info("Isn't needed shutdown sessions in Worker " + worker)
 
