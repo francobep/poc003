@@ -292,6 +292,7 @@ def tcp_sessions(dryrun=False):
             i = 0
             logging.debug("Set HAP in DRAIN mode => " + worker)
             if dryrun:
+                wait = False
                 logging.debug("Set worker " + worker + "in to drain mode")
                 # set_server_state(worker, "drain")
                 for conn in connections:
