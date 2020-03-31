@@ -6,7 +6,7 @@ import socket
 import requests
 import six
 import argparse
-import threading
+import itertools
 from time import sleep
 from kubernetes import client, config
 
@@ -236,16 +236,18 @@ Retorna lista de workers, lista de conexiones con traffico
 def get_workers_with_traffic(workers):
     workers_with_conn = []
     total_connections = 0
+    total_traffic = 0
     for worker in workers:
         connections = []
         connections_with_traffic = get_connections(worker)
         for connection_with_traffic in connections_with_traffic:
             connection = connection_with_traffic[0]
             connection_traffic = connection_with_traffic[1]
+            total_traffic = total_traffic + connection_traffic
             connections.append([connection, connection_traffic])
         workers_with_conn.append([worker, connections])
         total_connections = total_connections + len(connections)
-    return workers_with_conn,total_connections
+    return workers_with_conn,total_connections,total_traffic
 
 '''
 Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
@@ -275,7 +277,7 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
             exit(1)
 
     if lbmode == 1:
-        workers_with_conn, total_connections = get_workers_with_traffic(workers)
+        workers_with_conn, total_connections, total_traffic = get_workers_with_traffic(workers)
         fixed_workers_conn = round(total_connections / total_workers)
         logging.info("Total Connections: " + str(total_connections))
         logging.info("Total Workers: " + str(total_workers))
@@ -309,9 +311,17 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
                 logging.info("Isn't needed shutdown sessions in Worker " + worker)
     else:
         #Moment A
-        workers_with_connA, total_connectionsA = get_workers_with_traffic(workers)
+        workers_with_conn_a, total_connections_a, total_traffic_a = get_workers_with_traffic(workers)
+
         #Moment B
-        workers_with_connB, total_connectionsB = get_workers_with_traffic(workers)
+        workers_with_conn, total_connections, total_traffic = get_workers_with_traffic(workers)
+
+        for (a,b) in itertools.zip_longest(workers_with_conn_a, workers_with_conn):
+            logging.debug(a,b)
+            exit(1)
+
+
+
 
     if wait:
         logging.info("Waiting 60s to renew connections...")
