@@ -317,7 +317,7 @@ def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
                     logging.debug("Set worker " + worker + "in to drain mode")
                     set_server_state(worker, "drain")
                     for conn in connections:
-                        logging.debug(conn)
+                        logging.debug(conn[0])
                         exit(1)
                         if conn2kill != i:
                             logging.debug("Shutting down connection =>" + worker + ":" + conn)
