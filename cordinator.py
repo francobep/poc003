@@ -299,7 +299,7 @@ def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
         if lbmode == 1:
             if worker_connections > fixed_workers_conn + 1 or True:
                 logging.info("Go to shutdown sessions...")
-                wait = True
+                wait = dryrun
                 conn2kill = worker_connections - fixed_workers_conn
                 logging.debug("Sessions to kill => " + str(conn2kill))
                 i = 0
@@ -309,9 +309,7 @@ def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
                 for conn in connections:
                     if conn2kill != i:
                         logging.debug("Shutting down connection =>" + worker + ":" + conn[0])
-                        if dryrun:
-                            wait = False
-                        else:
+                        if not dryrun:
                             shutdown_session(worker, conn[0])
                             i = i + 1
             else:
@@ -322,13 +320,11 @@ def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
     if wait:
         logging.info("Waiting 60s to renew connections...")
         sleep(60)
+        for worker in worker_with_conn:
+            worker = worker[0]
+            set_server_state(worker, "ready")
     else:
         logging.info("Nothing to do, bye...")
-
-    for worker in worker_with_conn:
-        worker = worker[0]
-        set_server_state(worker, "ready")
-
 
 if __name__ == "__main__":
     # tcp_sessions()
