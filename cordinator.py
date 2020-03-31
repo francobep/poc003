@@ -317,9 +317,7 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
         logging.info("Waiting 60s to renew connections...")
         sleep(5)
         for worker in workers:
-            logging.debug(worker)
-            exit(1)
-            worker = worker[0]
+            worker = worker
             set_server_state(worker, "ready")
     else:
         logging.info("Nothing to do, bye...")
