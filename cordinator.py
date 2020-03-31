@@ -280,7 +280,7 @@ def tcp_sessions(sleeptime=1, lbmode=1, dryrun=False):
         total_workers = total_workers + 1
         logging.debug(total_connections)
         logging.debug(total_workers)
-        exit(1)
+    exit(1)
 
     fixed_workers_conn = round(total_connections / total_workers)
     logging.info("Total Connections: " + str(total_connections))
