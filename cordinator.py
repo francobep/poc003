@@ -291,7 +291,7 @@ def tcp_sessions(sleeptime=1, lbmode=1, dryrun=False):
 
     wait = False
     for worker in worker_with_conn:
-        connections = worker[0]
+        connections = worker[1]
         logging.debug(connections)
         exit(1)
         worker = worker[0]
