@@ -105,7 +105,7 @@ def get_workers_k8s_api():
                 for ip in ips:
                     workerip = ip.ip
                     workers.append(workerip)
-                    logging.debug("Found Worker from K8's API = " + str(workerip))
+                    logging.debug("Found Worker from K8's API => " + str(workerip))
         logging.info("Total Workers from K8s API = " + str(len(workers)))
         return workers
     except Exception as e:
