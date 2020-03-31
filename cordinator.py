@@ -232,7 +232,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 '''
 
 
-def tcp_sessions(dryrun=False):
+def tcp_sessions(lbmode=1,dryrun=False):
     logging.info("Starting balancing Wazuh Agents via TCP")
     logging.info("dryrun: " + str(dryrun))
     worker_with_conn = []
@@ -260,12 +260,23 @@ def tcp_sessions(dryrun=False):
         connections = []
         logging.info("Counting agents on Worker " + worker)
         connections_with_load = get_connections(worker)
-        for connection_with_load in connections_with_load:
-            connection = connection_with_load[0]
-            connections.append(connection)
-        worker_with_conn.append([worker, connections])
-        total_connections = total_connections + len(connections)
-        total_workers = total_workers + 1
+        if lbmode == 1:
+            for connection_with_load in connections_with_load:
+                #Get Connections
+                connection = connection_with_load[0]
+                connections.append(connection)
+                worker_with_conn.append([worker, connections])
+                total_connections = total_connections + len(connections)
+                total_workers = total_workers + 1
+        else:
+            for connection_with_load in connections_with_load:
+                #Get Traffic after sleeptime
+                sleep(10)
+                connection = connection_with_load[0]
+                new_traffic = get_traffic(worker, connection)
+                logging.debug("New Traffic => " + new_traffic)
+                exit(1)
+
 
     fixed_workers_conn = round(total_connections / total_workers)
     logging.info("Total Connections: " + str(total_connections))
@@ -284,32 +295,36 @@ def tcp_sessions(dryrun=False):
         worker_connections = len(connections)
         logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
         logging.info("Analyzing if is needed shutdown sessions...")
-        if worker_connections > fixed_workers_conn + 1:
-            logging.info("Go to shutdown sessions...")
-            wait = True
-            conn2kill = worker_connections - fixed_workers_conn
-            logging.debug("Sessions to kill => " + str(conn2kill))
-            i = 0
-            logging.debug("Set HAP in DRAIN mode => " + worker)
-            if dryrun:
-                wait = False
-                logging.debug("Set worker " + worker + "in to drain mode")
-                # set_server_state(worker, "drain")
-                for conn in connections:
-                    if conn2kill != i:
-                        logging.debug("Shutting down connection =>" + worker + ":" + conn)
-                        # shutdown_session(worker, conn)
-                        i = i + 1
+        if lbmode == 1:
+            if worker_connections > fixed_workers_conn + 1:
+                logging.info("Go to shutdown sessions...")
+                wait = True
+                conn2kill = worker_connections - fixed_workers_conn
+                logging.debug("Sessions to kill => " + str(conn2kill))
+                i = 0
+                logging.debug("Set HAP in DRAIN mode => " + worker)
+                if dryrun:
+                    wait = False
+                    logging.debug("Set worker " + worker + "in to drain mode")
+                    # set_server_state(worker, "drain")
+                    for conn in connections:
+                        if conn2kill != i:
+                            logging.debug("Shutting down connection =>" + worker + ":" + conn)
+                            # shutdown_session(worker, conn)
+                            i = i + 1
+                else:
+                    logging.debug("Set worker " + worker + "in to drain mode")
+                    set_server_state(worker, "drain")
+                    for conn in connections:
+                        if conn2kill != i:
+                            logging.debug("Shutting down connection =>" + worker + ":" + conn)
+                            shutdown_session(worker, conn)
+                            i = i + 1
             else:
-                logging.debug("Set worker " + worker + "in to drain mode")
-                set_server_state(worker, "drain")
-                for conn in connections:
-                    if conn2kill != i:
-                        logging.debug("Shutting down connection =>" + worker + ":" + conn)
-                        shutdown_session(worker, conn)
-                        i = i + 1
+                logging.info("Isn't needed shutdown sessions in Worker " + worker)
         else:
-            logging.info("Isn't needed shutdown sessions in Worker " + worker)
+            logging.info(lbmode)
+
 
     if wait:
         logging.info("Waiting 60s to renew connections...")
