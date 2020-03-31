@@ -275,12 +275,12 @@ def tcp_sessions(sleeptime=1, lbmode=1, dryrun=False):
                 logging.debug("stamptraffic1 => " + str(trafficstamp1))
                 total_traffic = trafficstamp1 - trafficstamp0
             connections.append([connection, total_traffic])
-            logging.debug(len(connections))
-            exit(1)
-
         worker_with_conn.append([worker, connections])
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
+        logging.debug(total_connections)
+        logging.debug(total_workers)
+        exit(1)
 
     fixed_workers_conn = round(total_connections / total_workers)
     logging.info("Total Connections: " + str(total_connections))
