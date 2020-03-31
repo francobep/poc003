@@ -155,10 +155,8 @@ Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
 '''
 
 
-def get_traffic(host, conn_id, sleeptime):
+def get_traffic(host, conn_id):
     traffic = 0
-    if sleeptime:
-        sleep(10)
     logging.debug("Getting connection traffic " + host + ":9999:" + conn_id)
     rdata = sendto_socket(host, "show sess " + conn_id)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
