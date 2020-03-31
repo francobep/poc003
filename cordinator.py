@@ -227,12 +227,13 @@ def set_server_state(host, state):
     else:
         logging.error("State no supported. Exiting...")
 
+
 '''
 Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 '''
 
 
-def tcp_sessions(lbmode=1,dryrun=False):
+def tcp_sessions(lbmode=1, dryrun=False):
     logging.info("Starting balancing Wazuh Agents via TCP")
     logging.info("dryrun: " + str(dryrun))
     worker_with_conn = []
@@ -261,8 +262,9 @@ def tcp_sessions(lbmode=1,dryrun=False):
         logging.info("Counting agents on Worker " + worker)
         connections_with_load = get_connections(worker)
         if lbmode == 1:
+            logging.info("###########TCP MODE###########")
             for connection_with_load in connections_with_load:
-                #Get Connections
+                # Get Connections
                 connection = connection_with_load[0]
                 connections.append(connection)
                 worker_with_conn.append([worker, connections])
@@ -270,14 +272,14 @@ def tcp_sessions(lbmode=1,dryrun=False):
                 total_workers = total_workers + 1
         else:
             for connection_with_load in connections_with_load:
-                #Get Traffic after sleeptime
+                logging.info("###########NETLOAD MODE###########")
+                # Get Traffic after sleeptime
                 sleep(3)
                 connection = connection_with_load[0]
                 new_traffic = get_traffic(worker, connection)
                 logging.debug("stamptraffic0 => " + str(connection_with_load[1]))
                 logging.debug("stamptraffic1 => " + str(new_traffic))
                 exit(1)
-
 
     fixed_workers_conn = round(total_connections / total_workers)
     logging.info("Total Connections: " + str(total_connections))
@@ -326,7 +328,6 @@ def tcp_sessions(lbmode=1,dryrun=False):
         else:
             logging.info(lbmode)
 
-
     if wait:
         logging.info("Waiting 60s to renew connections...")
         sleep(60)
@@ -341,4 +342,4 @@ if __name__ == "__main__":
     # tcp_sessions()
     args = parse_args()
     set_logger(args.verbosity_level)
-    tcp_sessions(lbmode=args.lbmode,dryrun=args.dryrun)
+    tcp_sessions(lbmode=args.lbmode, dryrun=args.dryrun)
