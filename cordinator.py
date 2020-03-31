@@ -217,17 +217,11 @@ Establece el estado de un worker ( via HAPROXY )
 
 def set_server_state(host, state):
     if state == "ready" or state == "drain" or state == "maint":
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((host, 9999))
-            payload = "set server l1/srv1 state " + state + "\n"
-            payload = payload.encode()
-            print(payload)
-            s.sendall(payload)
-            s.close()
+        logging.info("Setting server state...")
+        logging.debug("Setting server => " + host + "state => " + state)
+        sendto_socket(host, "set server l1/srv1 state " + state)
     else:
-        print("State no supported. Exiting...")
-        exit(1)
-
+        logging.error("State no supported. Exiting...")
 
 '''
 Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
@@ -236,7 +230,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 
 def tcp_sessions(dryrun=False):
     logging.info("Starting balancing Wazuh Agents via TCP")
-    logging.debug("dryrun: " + str(dryrun))
+    logging.info("dryrun: " + str(dryrun))
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
@@ -245,8 +239,8 @@ def tcp_sessions(dryrun=False):
     w_from_k8s = len(get_workers_k8s_api())
     w_from_wazuh = len(workers)
 
-    retry = 0
     logging.info("Matching inventory from Wazuh and K8's API...")
+    retry = 0
     while w_from_k8s != w_from_wazuh:
         logging.warning('Workers does not match, retrying...')
         sleep(5)
