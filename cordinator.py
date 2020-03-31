@@ -294,14 +294,12 @@ def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
         connections = worker[1]
         worker = worker[0]
         worker_connections = len(connections)
+        wait = not dryrun
         logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
         logging.info("Analyzing if is needed shutdown sessions...")
         if lbmode == 1:
             if worker_connections > fixed_workers_conn + 1 or True:
                 logging.info("Go to shutdown sessions...")
-                wait = not dryrun
-                logging.debug(wait)
-                exit(1)
                 conn2kill = worker_connections - fixed_workers_conn
                 logging.debug("Sessions to kill => " + str(conn2kill))
                 i = 0
