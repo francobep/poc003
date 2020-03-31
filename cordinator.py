@@ -256,7 +256,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 '''
 
 
-def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
+def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
     logging.info("Starting balancing Wazuh Agents lbmode => " + str(lbmode))
     logging.info("dryrun: " + str(dryrun))
     workers = get_workers_wazuh_api()
@@ -314,22 +314,21 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
     else:
         # Moment A
         workers_with_conn_a, total_connections_a, total_traffic_a = get_workers_with_traffic(workers)
-        logging.debug("lista A")
-        logging.debug(workers_with_conn_a)
-        sleep(10)
+        sleep(sleeptime)
         # Moment B
         workers_with_conn, total_connections, total_traffic = get_workers_with_traffic(workers)
-        logging.debug("lista B")
-        logging.debug(workers_with_conn)
 
         for (a, b) in itertools.zip_longest(workers_with_conn_a, workers_with_conn):
             for (c, d) in itertools.zip_longest(a[1], b[1]):
-                logging.debug(c[1])
-                logging.debug(d[1])
                 traffic = d[1] - c[1]
                 d[1] = traffic
 
-        logging.debug(workers_with_conn)
+        total_traffic = total_traffic - total_traffic_a
+        fixed_workers_traffic = round(total_traffic / total_workers)
+        logging.info("Total Traffic: " + str(total_traffic))
+        logging.info("Total Workers: " + str(total_workers))
+        logging.info("Calculating Fixed connections based on total traffic connections divide into total workers...")
+        logging.info("Fixed traffic per worker: " + str(fixed_workers_traffic))
         exit(1)
 
     if wait:
