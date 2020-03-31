@@ -6,6 +6,7 @@ import socket
 import requests
 import six
 import argparse
+import threading
 from time import sleep
 from kubernetes import client, config
 
@@ -154,8 +155,10 @@ Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
 '''
 
 
-def get_traffic(host, conn_id):
+def get_traffic(host, conn_id, sleeptime):
     traffic = 0
+    if sleeptime:
+        sleep(10)
     logging.debug("Getting connection traffic " + host + ":9999:" + conn_id)
     rdata = sendto_socket(host, "show sess " + conn_id)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
@@ -229,6 +232,24 @@ def set_server_state(host, state):
 
 
 '''
+Retorna lista de workers, lista de conexiones con traffico
+'''
+
+def get_workers_with_traffic(workers):
+    workers_with_conn = []
+    total_connections = 0
+    for worker in workers:
+        connections = []
+        connections_with_traffic = get_connections(worker)
+        for connection_with_traffic in connections_with_traffic:
+            connection = connection_with_traffic[0]
+            connection_traffic = connection_with_traffic[1]
+            connections.append([connection, connection_traffic])
+        workers_with_conn.append([worker, connections])
+        total_connections = total_connections + len(connections)
+    return workers_with_conn,total_connections
+
+'''
 Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 '''
 
@@ -236,13 +257,11 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
     logging.info("Starting balancing Wazuh Agents lbmode => " + str(lbmode))
     logging.info("dryrun: " + str(dryrun))
-    worker_with_conn = []
-    total_connections = 0
-    total_workers = 0
-
     workers = get_workers_wazuh_api()
+    total_workers = len(workers)
     w_from_k8s = len(get_workers_k8s_api())
     w_from_wazuh = len(workers)
+    wait = not dryrun
 
     logging.info("Matching inventory from Wazuh and K8's API...")
     retry = 0
@@ -257,29 +276,8 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
             logging.error('Workers does not match, exiting...')
             exit(1)
 
-    for worker in workers:
-        connections = []
-        logging.info("Counting agents on Worker " + worker)
-        connections_with_traffic = get_connections(worker)
-        logging.debug(connections_with_traffic)
-        for connection_with_load in connections_with_traffic:
-            # Get Connectionsπ
-            connection = connection_with_load[0]
-            trafficstamp0 = connection_with_load[1]
-            connection_traffic = trafficstamp0
-            total_traffic = 0
-            if lbmode == 2:
-                trafficstamp1 = get_traffic(worker, connection)
-                logging.debug("stamptraffic0 => " + str(trafficstamp0))
-                logging.debug("stamptraffic1 => " + str(trafficstamp1))
-                connection_traffic = trafficstamp1 - trafficstamp0
-                total_traffic = total_traffic + connection_traffic
-            connections.append([connection, connection_traffic])
-        worker_with_conn.append([worker, connections])
-        total_connections = total_connections + len(connections)
-        total_workers = total_workers + 1
-
     if lbmode == 1:
+        workers_with_conn, total_connections = get_workers_with_traffic(workers)
         fixed_workers_conn = round(total_connections / total_workers)
         logging.info("Total Connections: " + str(total_connections))
         logging.info("Total Workers: " + str(total_workers))
@@ -289,18 +287,10 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
         if fixed_workers_conn < 1:
             logging.error('Skipping "no_min_conn"')
             return False
-    else:
-        logging.debug(total_traffic)
-        fixed_workers_traffic = round(total_traffic / total_workers)
-        logging.debug(fixed_workers_traffic)
-        exit(1)
-
-    wait = not dryrun
-    for worker in worker_with_conn:
-        connections = worker[1]
-        worker = worker[0]
-        worker_connections = len(connections)
-        if lbmode == 1:
+        for worker in workers_with_conn:
+            connections = worker[1]
+            worker = worker[0]
+            worker_connections = len(connections)
             logging.info("Analyzing if is needed shutdown sessions...")
             logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
             if worker_connections > fixed_workers_conn + 1 or True:
@@ -319,13 +309,16 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
                             i = i + 1
             else:
                 logging.info("Isn't needed shutdown sessions in Worker " + worker)
-        else:
-            logging.info(lbmode)
+    else:
+        #Moment A
+        workers_with_connA, total_connectionsA = get_workers_with_traffic(workers)
+        #Moment B
+        workers_with_connB, total_connectionsB = get_workers_with_traffic(workers)
 
     if wait:
         logging.info("Waiting 60s to renew connections...")
         sleep(60)
-        for worker in worker_with_conn:
+        for worker in workers:
             worker = worker[0]
             set_server_state(worker, "ready")
     else:
