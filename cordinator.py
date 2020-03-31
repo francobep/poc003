@@ -26,6 +26,10 @@ def parse_args():
                         default=1,
                         choices={1, 2, 3},
                         dest="verbosity_level")
+    parser.add_argument("--force",
+                        action="store_true",
+                        help="Force set max_conn to workers",
+                        dest="force")
     parser.add_argument("--dryrun",
                         action="store_true",
                         help="Dry run mode.",
