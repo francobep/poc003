@@ -182,7 +182,7 @@ def get_connections(host):
     connections = []
     logging.info("Getting Traffic from TCP agent connection")
     hostname = socket.gethostname()
-    ipaddr = socket.gethostbyname(hostname)
+    ipaddr = str(socket.gethostbyname(hostname))
     for line in rdata:
         line = line.split(' ')
         logging.debug(line)
