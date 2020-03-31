@@ -314,10 +314,12 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
     else:
         # Moment A
         workers_with_conn_a, total_connections_a, total_traffic_a = get_workers_with_traffic(workers)
+        logging.debug("lista A")
         logging.debug(workers_with_conn_a)
 
         # Moment B
         workers_with_conn, total_connections, total_traffic = get_workers_with_traffic(workers)
+        logging.debug("lista B")
         logging.debug(workers_with_conn)
         exit(1)
         for (a, b) in itertools.zip_longest(workers_with_conn_a, workers_with_conn):
