@@ -183,7 +183,7 @@ def get_connections(host):
     logging.info("Getting Traffic from TCP agent connection")
     for line in rdata:
         i = 0
-        if datalength > 1:
+        if datalength > i:
             line = line.split(' ')
             logging.debug(line)
             src_ip = str(line[2]).replace("src=", "")
