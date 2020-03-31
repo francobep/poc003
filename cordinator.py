@@ -19,6 +19,7 @@ def parse_args():
                         default=1,
                         dest="lbmode")
     parser.add_argument("--v",
+                        "-v",
                         action="store",
                         type=int,
                         help="1 *Default => INFO, 2 => Warning, 3 => DEBUG",
