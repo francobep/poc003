@@ -187,8 +187,8 @@ def get_connections(host):
         line = line.split(' ')
         logging.debug(line)
         if line != ['']:
-            src_ip = str(line[2]).replace("src=", "")
-            logging.debug(src_ip)
+            src_ip = str(line[2]).replace("src=", "").split(":")
+            logging.debug(src_ip[0])
             logging.debug(ipaddr)
             if ipaddr != src_ip:
                 logging.debug("Source => " + src_ip)
