@@ -278,9 +278,6 @@ def tcp_sessions(sleeptime=1, lbmode=1, dryrun=False):
         worker_with_conn.append([worker, connections])
         total_connections = total_connections + len(connections)
         total_workers = total_workers + 1
-        logging.debug(total_connections)
-        logging.debug(total_workers)
-    exit(1)
 
     fixed_workers_conn = round(total_connections / total_workers)
     logging.info("Total Connections: " + str(total_connections))
@@ -294,7 +291,9 @@ def tcp_sessions(sleeptime=1, lbmode=1, dryrun=False):
 
     wait = False
     for worker in worker_with_conn:
-        connections = worker[1]
+        connections = worker[0]
+        logging.debug(connections)
+        exit(1)
         worker = worker[0]
         worker_connections = len(connections)
         logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
