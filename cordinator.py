@@ -314,7 +314,8 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
     else:
         # Moment A
         workers_with_conn_a, total_connections_a, total_traffic_a = get_workers_with_traffic(workers)
-
+        logging.debug(workers_with_conn_a)
+        exit(1)
         # Moment B
         workers_with_conn, total_connections, total_traffic = get_workers_with_traffic(workers)
 
