@@ -262,7 +262,8 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
         logging.info("Counting agents on Worker " + worker)
         connections_with_traffic = get_connections(worker)
         logging.debug(connections_with_traffic)
-
+        if lbmode == 2:
+            sleep(sleeptime)
         for connection_with_load in connections_with_traffic:
             # Get Connectionsπ
             connection = connection_with_load[0]
@@ -270,7 +271,6 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
             connection_traffic = trafficstamp0
             total_traffic = 0
             if lbmode == 2:
-                sleep(sleeptime)
                 trafficstamp1 = get_traffic(worker, connection)
                 logging.debug("stamptraffic0 => " + str(trafficstamp0))
                 logging.debug("stamptraffic1 => " + str(trafficstamp1))
