@@ -184,6 +184,8 @@ def get_connections(host):
     for line in rdata:
         if datalength > 0:
             line = line.split(' ')
+            logging.debug(line)
+            exit(1)
             src_ip = str(line[2]).replace("src=", "")
             logging.debug("Source => " + src_ip)
             conn_id = str(line[0]).replace(":", "")
