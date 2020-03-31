@@ -186,7 +186,7 @@ def get_connections(host):
     for line in rdata:
         line = line.split(' ')
         logging.debug(line)
-        if line != '':
+        if line != ['']:
             src_ip = str(line[2]).replace("src=", "")
             if ipaddr != src_ip:
                 logging.debug("Source => " + src_ip)
