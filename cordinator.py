@@ -233,7 +233,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 '''
 
 
-def tcp_sessions(lbmode=1, dryrun=False):
+def tcp_sessions(sleeptime=1, lbmode=1, dryrun=False):
     logging.info("Starting balancing Wazuh Agents via TCP")
     logging.info("dryrun: " + str(dryrun))
     worker_with_conn = []
@@ -260,27 +260,27 @@ def tcp_sessions(lbmode=1, dryrun=False):
     for worker in workers:
         connections = []
         logging.info("Counting agents on Worker " + worker)
-        connections_with_load = get_connections(worker)
-        logging.debug(connections_with_load)
-        if lbmode == 1:
-            for connection_with_load in connections_with_load:
-                logging.debug("########### TCP MODE ###########")
-                # Get Connectionsπ
-                connection = connection_with_load[0]
-                connections.append(connection)
-            worker_with_conn.append([worker, connections])
-            total_connections = total_connections + len(connections)
-            total_workers = total_workers + 1
-        else:
-            for connection_with_load in connections_with_load:
-                logging.debug("########### NETLOAD MODE ###########")
-                # Get Traffic after sleeptime
-                sleep(3)
-                connection = connection_with_load[0]
-                new_traffic = get_traffic(worker, connection)
-                logging.debug("stamptraffic0 => " + str(connection_with_load[1]))
-                logging.debug("stamptraffic1 => " + str(new_traffic))
-                exit(1)
+        connections_with_traffic = get_connections(worker)
+        logging.debug(connections_with_traffic)
+
+        for connection_with_load in connections_with_traffic:
+            # Get Connectionsπ
+            connection = connection_with_load[0]
+            trafficstamp0 = connection_with_load[1]
+            total_traffic = trafficstamp0
+            if lbmode == 2:
+                sleep(sleeptime)
+                trafficstamp1 = get_traffic(worker, connection)
+                logging.debug("stamptraffic0 => " + str(trafficstamp0))
+                logging.debug("stamptraffic1 => " + str(trafficstamp1))
+                total_traffic = trafficstamp1 - trafficstamp0
+            connections.append([connection, total_traffic])
+            logging.debug(connections)
+            exit(1)
+
+        worker_with_conn.append([worker, connections])
+        total_connections = total_connections + len(connections)
+        total_workers = total_workers + 1
 
     fixed_workers_conn = round(total_connections / total_workers)
     logging.info("Total Connections: " + str(total_connections))
@@ -337,7 +337,6 @@ def tcp_sessions(lbmode=1, dryrun=False):
             set_server_state(worker, "ready")
     else:
         logging.info("Nothing to do, bye...")
-
 
 if __name__ == "__main__":
     # tcp_sessions()
