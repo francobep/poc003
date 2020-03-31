@@ -185,7 +185,7 @@ def get_connections(host):
     ipaddr = str(socket.gethostbyname(hostname))
     for line in rdata:
         line = line.split(' ')
-ˇ        if line != ['']:
+        if line != ['']:
             src_con = str(line[2]).replace("src=", "").split(":")
             src_ipaddr = src_con[0]
             if ipaddr != src_ipaddr:
