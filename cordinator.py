@@ -185,7 +185,7 @@ def get_connections(host):
         if datalength > 0:
             line = line.split(' ')
             src_ip = str(line[2]).replace("src=", "")
-            logging.debug("Source => " + src_ip + ":" + host + ":9999")
+            logging.debug("Source => " + src_ip)
             conn_id = str(line[0]).replace(":", "")
             logging.debug("Getting connection ID " + conn_id)
             traffic = get_traffic(host, conn_id)
