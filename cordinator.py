@@ -191,7 +191,6 @@ def get_connections(host):
             logging.debug("Getting connection ID " + conn_id)
             traffic = get_traffic(host, conn_id)
             connections.append([conn_id, traffic])
-    exit(1)
     logging.debug("Current [connections,traffic] from " + host + ":9999 " + str(connections))
     return connections
 
