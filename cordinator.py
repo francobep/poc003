@@ -272,7 +272,7 @@ def tcp_sessions(lbmode=1, dryrun=False):
                 worker_with_conn.append([worker, connections])
                 total_connections = total_connections + len(connections)
                 total_workers = total_workers + 1
-                logging.debug(total_connections)
+                logging.debug(connection)
     exit(1)
         # else:
         #     for connection_with_load in connections_with_load:
