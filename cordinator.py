@@ -271,10 +271,10 @@ def tcp_sessions(lbmode=1,dryrun=False):
         else:
             for connection_with_load in connections_with_load:
                 #Get Traffic after sleeptime
-                sleep(10)
+                sleep(3)
                 connection = connection_with_load[0]
                 new_traffic = get_traffic(worker, connection)
-                logging.debug("New Traffic => " + new_traffic)
+                logging.debug("New Traffic => " + str(new_traffic))
                 exit(1)
 
 
