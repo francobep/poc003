@@ -236,7 +236,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 
 def tcp_sessions(dryrun=False):
     logging.info("Starting balancing Wazuh Agents via TCP")
-    logging.debug("dryrun" + str(dryrun))
+    logging.debug("dryrun: " + str(dryrun))
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
@@ -326,4 +326,4 @@ if __name__ == "__main__":
     # tcp_sessions()
     args = parse_args()
     set_logger(args.verbosity_level)
-    tcp_sessions(dryrun=True)
+    tcp_sessions(dryrun=args.dryrun)
