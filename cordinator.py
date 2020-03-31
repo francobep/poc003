@@ -340,4 +340,4 @@ if __name__ == "__main__":
     # tcp_sessions()
     args = parse_args()
     set_logger(args.verbosity_level)
-    tcp_sessions(dryrun=args.dryrun)
+    tcp_sessions(lbmode=args.lbmode,dryrun=args.dryrun)
