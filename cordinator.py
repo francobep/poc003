@@ -264,8 +264,7 @@ def tcp_sessions(lbmode=1, dryrun=False):
         logging.debug(connections_with_load)
         if lbmode == 1:
             for connection_with_load in connections_with_load:
-                logging.info("###########TCP MODE###########")
-                logging.debug(connection_with_load)
+                logging.debug("########### TCP MODE ###########")
                 # Get Connectionsπ
                 connection = connection_with_load[0]
                 connections.append(connection)
@@ -274,7 +273,7 @@ def tcp_sessions(lbmode=1, dryrun=False):
             total_workers = total_workers + 1
         else:
             for connection_with_load in connections_with_load:
-                logging.info("###########NETLOAD MODE###########")
+                logging.debug("########### NETLOAD MODE ###########")
                 # Get Traffic after sleeptime
                 sleep(3)
                 connection = connection_with_load[0]
