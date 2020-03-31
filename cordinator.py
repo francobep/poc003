@@ -261,9 +261,12 @@ def tcp_sessions(lbmode=1, dryrun=False):
         connections = []
         logging.info("Counting agents on Worker " + worker)
         connections_with_load = get_connections(worker)
+        logging.debug(connections_with_load)
+        exit(1)
         if lbmode == 1:
-            logging.info("###########TCP MODE###########")
             for connection_with_load in connections_with_load:
+                logging.info("###########TCP MODE###########")
+                logging.debug(connection_with_load)
                 # Get Connections
                 connection = connection_with_load[0]
                 connections.append(connection)
