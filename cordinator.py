@@ -187,10 +187,9 @@ def get_connections(host):
         line = line.split(' ')
         logging.debug(line)
         if line != ['']:
-            src_ip = str(line[2]).replace("src=", "").split(":")
-            logging.debug(src_ip[0])
-            logging.debug(ipaddr)
-            if ipaddr != src_ip:
+            src_con = str(line[2]).replace("src=", "").split(":")
+            src_ipaddr = src_con[0]
+            if ipaddr != src_ipaddr:
                 logging.debug("Source => " + src_ip)
                 conn_id = str(line[0]).replace(":", "")
                 logging.debug("Getting connection ID " + conn_id)
