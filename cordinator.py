@@ -207,7 +207,7 @@ Elimina una sesion pasando ID.
 '''
 
 
-def shudown_session(host, connection):
+def shutdown_session(host, connection):
     logging.info("Shutting down TCP connection...")
     logging.debug("Shutting down TCP connection =>" + host + ":9999:" + connection)
     sendto_socket(host, "shutdown session " + connection)
@@ -298,7 +298,7 @@ def tcp_sessions(dryrun=False):
                 for conn in connections:
                     if conn2kill != i:
                         logging.debug("Shutting down connection =>" + worker + ":" + conn)
-                        # shudown_session(worker, conn)
+                        # shutdown_session(worker, conn)
                         i = i + 1
             else:
                 logging.debug("Set worker " + worker + "in to drain mode")
@@ -306,7 +306,7 @@ def tcp_sessions(dryrun=False):
                 for conn in connections:
                     if conn2kill != i:
                         logging.debug("Shutting down connection =>" + worker + ":" + conn)
-                        shudown_session(worker, conn)
+                        shutdown_session(worker, conn)
                         i = i + 1
         else:
             logging.info("Isn't needed shutdown sessions in Worker " + worker)
