@@ -188,6 +188,9 @@ def get_connections(host):
         logging.debug(line)
         if line != ['']:
             src_ip = str(line[2]).replace("src=", "")
+            logging.debug(src_ip)
+            logging.debug(ipaddr)
+            exit(1)
             if ipaddr != src_ip:
                 logging.debug("Source => " + src_ip)
                 conn_id = str(line[0]).replace(":", "")
