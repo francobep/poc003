@@ -179,19 +179,17 @@ def get_connections(host):
     rdata = sendto_socket(host, "show sess")
     datalength = len(rdata) - 2
     logging.info("Current TCP agent connections => " + str(datalength) + " on Worker " + host)
-    i = 0
     connections = []
     logging.info("Getting Traffic from TCP agent connection")
     for line in rdata:
-        if datalength > i:
+        if datalength > 0:
             line = line.split(' ')
             src_ip = str(line[2]).replace("src=", "")
-            logging.debug("SRC IP => " + src_ip)
+            logging.debug("Source => " + src_ip + ":" + host + ":9999")
             conn_id = str(line[0]).replace(":", "")
             logging.debug("Getting connection ID " + conn_id)
             traffic = get_traffic(host, conn_id)
             connections.append([conn_id, traffic])
-            i = i + 1
     logging.debug("Current [connections,traffic] from " + host + ":9999 " + str(connections))
     return connections
 
