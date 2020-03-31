@@ -292,16 +292,16 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
             logging.error('Skipping "no_min_conn"')
             return False
     else:
+        logging.debug(total_traffic)
         fixed_workers_traffic = round(total_traffic / total_workers)
         logging.debug(fixed_workers_traffic)
         exit(1)
 
-    wait = False
+    wait = not dryrun
     for worker in worker_with_conn:
         connections = worker[1]
         worker = worker[0]
         worker_connections = len(connections)
-        wait = not dryrun
         if lbmode == 1:
             logging.info("Analyzing if is needed shutdown sessions...")
             logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
