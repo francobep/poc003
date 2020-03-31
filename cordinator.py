@@ -299,7 +299,7 @@ def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
         if lbmode == 1:
             if worker_connections > fixed_workers_conn + 1 or True:
                 logging.info("Go to shutdown sessions...")
-                wait = dryrun
+                wait = not dryrun
                 logging.debug(wait)
                 exit(1)
                 conn2kill = worker_connections - fixed_workers_conn
