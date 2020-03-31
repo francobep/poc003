@@ -234,7 +234,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 '''
 
 
-def tcp_sessions():
+def tcp_sessions(dryrun=False):
     logging.info("Starting balancing Wazuh Agents via TCP")
     worker_with_conn = []
     total_connections = 0
@@ -292,7 +292,6 @@ def tcp_sessions():
             logging.debug("Sessions to kill => " + str(conn2kill))
             i = 0
             logging.debug("Set HAP in DRAIN mode => " + worker)
-            dryrun = False
             if dryrun:
                 logging.debug("Set worker " + worker + "in to drain mode")
                 # set_server_state(worker, "drain")
@@ -326,4 +325,4 @@ if __name__ == "__main__":
     # tcp_sessions()
     args = parse_args()
     set_logger(args.verbosity_level)
-    tcp_sessions()
+    tcp_sessions(dryrun=True)
