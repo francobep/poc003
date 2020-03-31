@@ -15,14 +15,14 @@ def parse_args():
     parser.add_argument("--lbmode",
                         action="store",
                         type=int,
-                        help="1 *Default => TCP Sessions, 2 => TCP Sessions with Network Load",
+                        help="1 => TCP Sessions, 2 => TCP Sessions with Network Load. Default=1",
                         default=1,
                         dest="lbmode")
     parser.add_argument("--v",
                         "-v",
                         action="store",
                         type=int,
-                        help="1 *Default => INFO, 2 => Warning, 3 => DEBUG",
+                        help="1 => INFO, 2 => Warning, 3 => DEBUG. Default=1",
                         default=1,
                         choices={1, 2, 3},
                         dest="verbosity_level")
