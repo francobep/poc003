@@ -274,8 +274,8 @@ def tcp_sessions(lbmode=1,dryrun=False):
                 sleep(3)
                 connection = connection_with_load[0]
                 new_traffic = get_traffic(worker, connection)
-                logging.debug("Old Traffic => " + str(connection_with_load[1]))
-                logging.debug("New Traffic => " + str(new_traffic))
+                logging.debug("stamptraffic0 => " + str(connection_with_load[1]))
+                logging.debug("stamptraffic1 => " + str(new_traffic))
                 exit(1)
 
 
