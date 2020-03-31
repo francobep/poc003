@@ -233,6 +233,7 @@ def set_server_state(host, state):
 Retorna lista de workers, lista de conexiones con traffico
 '''
 
+
 def get_workers_with_traffic(workers):
     workers_with_conn = []
     total_connections = 0
@@ -247,7 +248,8 @@ def get_workers_with_traffic(workers):
             connections.append([connection, connection_traffic])
         workers_with_conn.append([worker, connections])
         total_connections = total_connections + len(connections)
-    return workers_with_conn,total_connections,total_traffic
+    return workers_with_conn, total_connections, total_traffic
+
 
 '''
 Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
@@ -310,18 +312,15 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
             else:
                 logging.info("Isn't needed shutdown sessions in Worker " + worker)
     else:
-        #Moment A
+        # Moment A
         workers_with_conn_a, total_connections_a, total_traffic_a = get_workers_with_traffic(workers)
 
-        #Moment B
+        # Moment B
         workers_with_conn, total_connections, total_traffic = get_workers_with_traffic(workers)
 
-        for (a,b) in itertools.zip_longest(workers_with_conn_a, workers_with_conn):
-            logging.debug(str(a),str(b))
+        for (a, b) in itertools.zip_longest(workers_with_conn_a, workers_with_conn):
+            logging.debug(a[0], b[0])
             exit(1)
-
-
-
 
     if wait:
         logging.info("Waiting 60s to renew connections...")
