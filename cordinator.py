@@ -181,17 +181,18 @@ def get_connections(host):
     logging.info("Current TCP agent connections => " + str(datalength) + " on Worker " + host)
     connections = []
     logging.info("Getting Traffic from TCP agent connection")
+    hostname = socket.gethostname()
+    ipaddr = socket.gethostbyname(hostname)
     for line in rdata:
-        if datalength > 2:
-            line = line.split(' ')
-            logging.debug(line)
-            src_ip = str(line[2]).replace("src=", "")
+        line = line.split(' ')
+        logging.debug(line)
+        if line != '' and ipaddr != str(line[2]).replace("src=", ""):
             logging.debug("Source => " + src_ip)
             conn_id = str(line[0]).replace(":", "")
             logging.debug("Getting connection ID " + conn_id)
             traffic = get_traffic(host, conn_id)
             connections.append([conn_id, traffic])
-    logging.debug("Current [connections,traffic] from " + host + ":9999 " + str(connections))
+        logging.debug("Current [connections,traffic] from " + host + ":9999 " + str(connections))
     return connections
 
 
