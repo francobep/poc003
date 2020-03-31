@@ -177,7 +177,7 @@ Retorna lista de conexiones,trafico de un worker
 def get_connections(host):
     logging.info("Getting current agents TCP connections from HAP")
     rdata = sendto_socket(host, "show sess")
-    datalength = len(rdata) - 1
+    datalength = len(rdata) - 2
     logging.info("Current TCP agent connections => " + str(datalength) + " on Worker " + host)
     i = 0
     connections = []
@@ -185,6 +185,8 @@ def get_connections(host):
     for line in rdata:
         if datalength > i:
             line = line.split(' ')
+            src_ip = str(line[2]).replace("src=", "")
+            logging.debug("SRC IP => " + src_ip)
             conn_id = str(line[0]).replace(":", "")
             logging.debug("Getting connection ID " + conn_id)
             traffic = get_traffic(host, conn_id)
