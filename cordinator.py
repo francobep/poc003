@@ -274,16 +274,16 @@ def tcp_sessions(lbmode=1, dryrun=False):
                 total_workers = total_workers + 1
                 logging.debug(total_workers)
     exit(1)
-        else:
-            for connection_with_load in connections_with_load:
-                logging.info("###########NETLOAD MODE###########")
-                # Get Traffic after sleeptime
-                sleep(3)
-                connection = connection_with_load[0]
-                new_traffic = get_traffic(worker, connection)
-                logging.debug("stamptraffic0 => " + str(connection_with_load[1]))
-                logging.debug("stamptraffic1 => " + str(new_traffic))
-                exit(1)
+        # else:
+        #     for connection_with_load in connections_with_load:
+        #         logging.info("###########NETLOAD MODE###########")
+        #         # Get Traffic after sleeptime
+        #         sleep(3)
+        #         connection = connection_with_load[0]
+        #         new_traffic = get_traffic(worker, connection)
+        #         logging.debug("stamptraffic0 => " + str(connection_with_load[1]))
+        #         logging.debug("stamptraffic1 => " + str(new_traffic))
+        #         exit(1)
 
     fixed_workers_conn = round(total_connections / total_workers)
     logging.info("Total Connections: " + str(total_connections))
