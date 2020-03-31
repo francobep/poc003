@@ -5,17 +5,51 @@ import re
 import socket
 import requests
 import six
+import argparse
 from time import sleep
 from kubernetes import client, config
 
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(pathname)s:%(lineno)d %(funcName)s - %(message)s',
-                              '%m-%d %H:%M:%S')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--lbmode",
+                        action="store",
+                        type=int,
+                        help="1 *Default => TCP Sessions, 2 => TCP Sessions with Network Load",
+                        default=1,
+                        dest="lbmode")
+    parser.add_argument("--v",
+                        action="store",
+                        type=int,
+                        help="1 *Default => INFO, 2 => Warning, 3 => DEBUG",
+                        default=1,
+                        dest="verbosity_level")
+    parser.add_argument("--dryrun",
+                        action="store_true",
+                        help="Dry run mode.",
+                        dest="dryrun")
+    args = parser.parse_args()
+    logging.debug(vars(args))
+    return args
+
+
+def set_logger(verbosity_level):
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(pathname)s:%(lineno)d %(funcName)s - %(message)s',
+                                  '%m-%d %H:%M:%S')
+    ch.setFormatter(formatter)
+    if verbosity_level == 2:
+        logger.setLevel(logging.WARNING)
+        ch.setLevel(logging.WARNING)
+    elif verbosity_level == 3:
+        logger.setLevel(logging.DEBUG)
+        ch.setLevel(logging.DEBUG)
+    logger.addHandler(ch)
+    return ch
+
 
 '''
 send socket
@@ -37,9 +71,9 @@ def sendto_socket(host, msg):
         except socket.timeout:
             return False
         else:
-            logger.info("Sent MSG to HAP Runtime API OK!")
-            logger.debug(("sent to " + host + ":9999 " + str(msg)))
-            logger.debug("data from " + host + " " + str(data))
+            logging.info("Sent MSG to HAP Runtime API OK!")
+            logging.debug(("sent to " + host + ":9999 " + str(msg)))
+            logging.debug("data from " + host + " " + str(data))
             return data
     finally:
         s.close()
@@ -51,7 +85,7 @@ retorna IP de endpoints del servicio wazuh-workers
 
 
 def get_workers_k8s_api():
-    logger.info("Getting workers from K8's API")
+    logging.info("Getting workers from K8's API")
     config.load_incluster_config()
     v1 = client.CoreV1Api()
     try:
@@ -64,11 +98,11 @@ def get_workers_k8s_api():
                 for ip in ips:
                     workerip = ip.ip
                     workers.append(workerip)
-                    logger.debug("Found Worker from K8's API = " + str(workerip))
-        logger.info("Total Workers from K8s API = " + str(len(workers)))
+                    logging.debug("Found Worker from K8's API = " + str(workerip))
+        logging.info("Total Workers from K8s API = " + str(len(workers)))
         return workers
     except Exception as e:
-        logger.error(e)
+        logging.error(e)
         return False
 
 
@@ -78,7 +112,7 @@ Retorna lista de IP de workers del servicio API de Wazuh
 
 
 def get_workers_wazuh_api():
-    logger.info("Getting workers from Wazuh API")
+    logging.info("Getting workers from Wazuh API")
     namespace = 'wazuh'  # TODO:Get NAMESPACE POD
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
     auth = requests.auth.HTTPBasicAuth('foo', 'bar')  # TODO Get API Credentials
@@ -90,7 +124,7 @@ def get_workers_wazuh_api():
         r = requests.get(url, auth=auth, params=None, verify=False)
         response = r.json()
     except requests.exceptions as e:
-        logger.error(e)
+        logging.error(e)
         return False
     else:
         items = response['data']['items']
@@ -98,8 +132,8 @@ def get_workers_wazuh_api():
             wazuhtype = worker['type']
             if wazuhtype == "worker":
                 workers.append(worker['ip'])
-                logger.debug("Found Worker from Wazuh API = " + str(worker['ip']))
-        logger.info("Total Workers from Wazuh API: " + str(len(workers)))
+                logging.debug("Found Worker from Wazuh API = " + str(worker['ip']))
+        logging.info("Total Workers from Wazuh API: " + str(len(workers)))
         return workers
 
 
@@ -110,14 +144,14 @@ Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
 
 def get_traffic(host, conn_id):
     traffic = 0
-    logger.debug("Getting connection traffic " + host + ":9999:" + conn_id)
+    logging.debug("Getting connection traffic " + host + ":9999:" + conn_id)
     rdata = sendto_socket(host, "show sess " + conn_id)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
     for total in rawtotals:
         if traffic == 0:
-            logger.debug("Connection " + host + ":9999:" + conn_id + " bytes inbound " + str(total))
+            logging.debug("Connection " + host + ":9999:" + conn_id + " bytes inbound " + str(total))
         else:
-            logger.debug("Connection " + host + ":9999:" + conn_id + " bytes outbound " + str(total))
+            logging.debug("Connection " + host + ":9999:" + conn_id + " bytes outbound " + str(total))
         tbytes = int(total.replace("total=", ""))
         traffic = traffic + tbytes
     return traffic
@@ -129,22 +163,22 @@ Retorna lista de conexiones,trafico de un worker
 
 
 def get_connections(host):
-    logger.info("Getting current agents TCP connections from HAP")
+    logging.info("Getting current agents TCP connections from HAP")
     rdata = sendto_socket(host, "show sess")
     datalength = len(rdata) - 1
-    logger.info("Current TCP agent connections => " + str(datalength) + " on Worker " + host)
+    logging.info("Current TCP agent connections => " + str(datalength) + " on Worker " + host)
     i = 0
     connections = []
-    logger.info("Getting Traffic from TCP agent connection")
+    logging.info("Getting Traffic from TCP agent connection")
     for line in rdata:
         if datalength > i:
             line = line.split(' ')
             conn_id = str(line[0]).replace(":", "")
-            logger.debug("Getting connection ID " + conn_id)
+            logging.debug("Getting connection ID " + conn_id)
             traffic = get_traffic(host, conn_id)
             connections.append([conn_id, traffic])
             i = i + 1
-    logger.debug("Current [connections,traffic] from " + host + ":9999 " + str(connections))
+    logging.debug("Current [connections,traffic] from " + host + ":9999 " + str(connections))
     return connections
 
 
@@ -154,13 +188,10 @@ Elimina una sesion pasando ID.
 
 
 def shudown_session(host, connection):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((host, 9999))
-        payload = 'shutdown session ' + connection + '\n'
-        payload = payload.encode()
-        print(payload)
-        s.sendall(payload)
-        s.close()
+    logging.info("Shutting down TCP connection...")
+    logging.debug("Shutting down TCP connection =>" + host + ":9999:" + connection)
+    sendto_socket(host, "shutdown session " + connection)
+    return True
 
 
 '''
@@ -188,7 +219,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 
 
 def tcp_sessions():
-    logger.info("Starting balancing Wazuh Agents via TCP")
+    logging.info("Starting balancing Wazuh Agents via TCP")
     worker_with_conn = []
     total_connections = 0
     total_workers = 0
@@ -198,21 +229,21 @@ def tcp_sessions():
     w_from_wazuh = len(workers)
 
     retry = 0
-    logger.info("Matching inventory from Wazuh and K8's API...")
+    logging.info("Matching inventory from Wazuh and K8's API...")
     while w_from_k8s != w_from_wazuh:
-        logger.warning('Workers does not match, retrying...')
+        logging.warning('Workers does not match, retrying...')
         sleep(5)
         retry = retry + 1
         workers = get_workers_wazuh_api()
         w_from_k8s = len(get_workers_k8s_api())
         w_from_wazuh = len(workers)
         if retry > 5:
-            logger.error('Workers does not match, exiting...')
+            logging.error('Workers does not match, exiting...')
             exit(1)
 
     for worker in workers:
         connections = []
-        logger.info("Counting agents on Worker " + worker)
+        logging.info("Counting agents on Worker " + worker)
         connections_with_load = get_connections(worker)
         for connection_with_load in connections_with_load:
             connection = connection_with_load[0]
@@ -222,13 +253,13 @@ def tcp_sessions():
         total_workers = total_workers + 1
 
     fixed_workers_conn = round(total_connections / total_workers)
-    logger.info("Total Connections: " + str(total_connections))
-    logger.info("Total Workers: " + str(total_workers))
-    logger.info("Calculating Fixed connections based on total connections divide into total workers...")
-    logger.info("Fixed connections per worker: " + str(fixed_workers_conn))
+    logging.info("Total Connections: " + str(total_connections))
+    logging.info("Total Workers: " + str(total_workers))
+    logging.info("Calculating Fixed connections based on total connections divide into total workers...")
+    logging.info("Fixed connections per worker: " + str(fixed_workers_conn))
     # Minimum connections
     if fixed_workers_conn < 1:
-        logger.error('Skipping "no_min_conn"')
+        logging.error('Skipping "no_min_conn"')
         return False
 
     wait = False
@@ -236,44 +267,45 @@ def tcp_sessions():
         connections = worker[1]
         worker = worker[0]
         worker_connections = len(connections)
-        logger.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
-        logger.info("Analyzing if is needed shutdown sessions...")
+        logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
+        logging.info("Analyzing if is needed shutdown sessions...")
         if worker_connections > fixed_workers_conn + 1:
-            logger.info("Go to shutdown sessions...")
+            logging.info("Go to shutdown sessions...")
             wait = True
             conn2kill = worker_connections - fixed_workers_conn
-            logger.debug("Sessions to kill => " + str(conn2kill))
+            logging.debug("Sessions to kill => " + str(conn2kill))
             i = 0
-            logger.debug("Set HAP in DRAIN mode => " + worker)
-            dryrunmode = False
-            if dryrunmode:
-                logger.debug("Set worker " + worker + "in to drain mode")
-                #set_server_state(worker, "drain")
+            logging.debug("Set HAP in DRAIN mode => " + worker)
+            dryrun = False
+            if dryrun:
+                logging.debug("Set worker " + worker + "in to drain mode")
+                # set_server_state(worker, "drain")
                 for conn in connections:
                     if conn2kill != i:
-                        logger.debug("Shutting down connection =>" + worker + ":" + conn)
-                        #shudown_session(worker, conn)
+                        logging.debug("Shutting down connection =>" + worker + ":" + conn)
+                        # shudown_session(worker, conn)
                         i = i + 1
             else:
-                logger.debug("Set worker " + worker + "in to drain mode")
+                logging.debug("Set worker " + worker + "in to drain mode")
                 set_server_state(worker, "drain")
                 for conn in connections:
                     if conn2kill != i:
-                        logger.debug("Shutting down connection =>" + worker + ":" + conn)
+                        logging.debug("Shutting down connection =>" + worker + ":" + conn)
                         shudown_session(worker, conn)
                         i = i + 1
         else:
-            logger.info("Isn't needed shutdown sessions in Worker " + worker)
+            logging.info("Isn't needed shutdown sessions in Worker " + worker)
 
     if wait:
-        logger.info("Waiting 60s to renew connections...")
+        logging.info("Waiting 60s to renew connections...")
         sleep(60)
         for worker in worker_with_conn:
             worker = worker[0]
             set_server_state(worker, "ready")
     else:
-        logger.info("Nothing to do, bye...")
+        logging.info("Nothing to do, bye...")
 
 
 if __name__ == "__main__":
-    tcp_sessions()
+    # tcp_sessions()
+    args = parse_args()
