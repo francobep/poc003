@@ -233,7 +233,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 '''
 
 
-def tcp_sessions(sleeptime=1, lbmode=1, dryrun=False):
+def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
     logging.info("Starting balancing Wazuh Agents via TCP")
     logging.info("dryrun: " + str(dryrun))
     worker_with_conn = []
@@ -292,8 +292,6 @@ def tcp_sessions(sleeptime=1, lbmode=1, dryrun=False):
     wait = False
     for worker in worker_with_conn:
         connections = worker[1]
-        logging.debug(connections)
-        exit(1)
         worker = worker[0]
         worker_connections = len(connections)
         logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
@@ -320,6 +318,8 @@ def tcp_sessions(sleeptime=1, lbmode=1, dryrun=False):
                     set_server_state(worker, "drain")
                     for conn in connections:
                         if conn2kill != i:
+                            logging.debug(conn)
+                            exit(1)
                             logging.debug("Shutting down connection =>" + worker + ":" + conn)
                             shutdown_session(worker, conn)
                             i = i + 1
