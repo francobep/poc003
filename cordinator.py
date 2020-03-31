@@ -326,7 +326,11 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
             for (c, d) in itertools.zip_longest(a[1], b[1]):
                 logging.debug(c[1])
                 logging.debug(d[1])
-                exit(1)
+                traffic = d[1] - c[1]
+                d[1] = traffic
+
+        logging.debug(workers_with_conn)
+        exit(1)
 
     if wait:
         logging.info("Waiting 60s to renew connections...")
