@@ -23,6 +23,7 @@ def parse_args():
                         type=int,
                         help="1 *Default => INFO, 2 => Warning, 3 => DEBUG",
                         default=1,
+                        choices={1, 2, 3},
                         dest="verbosity_level")
     parser.add_argument("--dryrun",
                         action="store_true",
@@ -34,21 +35,27 @@ def parse_args():
 
 
 def set_logger(verbosity_level):
+    log_format = "%(asctime)s %(levelname)s: %(message)s"
+    logging.basicConfig(
+        level=logging.INFO,
+        format=log_format,
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
-    formatter = logging.Formatter('[%(asctime)s] %(levelname)s %(pathname)s:%(lineno)d %(funcName)s - %(message)s',
-                                  '%m-%d %H:%M:%S')
-    ch.setFormatter(formatter)
+    level = logging.INFO
     if verbosity_level == 2:
-        logger.setLevel(logging.WARNING)
-        ch.setLevel(logging.WARNING)
+        level = logging.WARNING
     elif verbosity_level == 3:
-        logger.setLevel(logging.DEBUG)
-        ch.setLevel(logging.DEBUG)
-    logger.addHandler(ch)
-    return ch
+        level = logging.DEBUG
+    logger.setLevel(level)
+
+    console = logging.StreamHandler()
+    console.setLevel(level)
+    formatter = logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S")
+    console.setFormatter(formatter)
+    if logger.hasHandlers():
+        logger.handlers.clear()
+    logger.addHandler(console)
 
 
 '''
@@ -309,3 +316,5 @@ def tcp_sessions():
 if __name__ == "__main__":
     # tcp_sessions()
     args = parse_args()
+    set_logger(args.verbosity_level)
+    tcp_sessions()
