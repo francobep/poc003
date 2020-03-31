@@ -304,21 +304,14 @@ def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
                 logging.debug("Sessions to kill => " + str(conn2kill))
                 i = 0
                 logging.debug("Set HAP in DRAIN mode => " + worker)
-                if dryrun:
-                    wait = False
-                    logging.debug("Set worker " + worker + "in to drain mode")
-                    # set_server_state(worker, "drain")
-                    for conn in connections:
-                        if conn2kill != i:
-                            logging.debug("Shutting down connection =>" + worker + ":" + conn[0])
-                            # shutdown_session(worker, conn)
-                            i = i + 1
-                else:
-                    logging.debug("Set worker " + worker + "in to drain mode")
-                    set_server_state(worker, "drain")
-                    for conn in connections:
-                        if conn2kill != i:
-                            logging.debug("Shutting down connection =>" + worker + ":" + conn[0])
+                logging.debug("Set worker " + worker + "in to drain mode")
+                set_server_state(worker, "drain")
+                for conn in connections:
+                    if conn2kill != i:
+                        logging.debug("Shutting down connection =>" + worker + ":" + conn[0])
+                        if dryrun:
+                            wait = False
+                        else:
                             shutdown_session(worker, conn[0])
                             i = i + 1
             else:
@@ -329,11 +322,13 @@ def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
     if wait:
         logging.info("Waiting 60s to renew connections...")
         sleep(60)
-        for worker in worker_with_conn:
-            worker = worker[0]
-            set_server_state(worker, "ready")
     else:
         logging.info("Nothing to do, bye...")
+
+    for worker in worker_with_conn:
+        worker = worker[0]
+        set_server_state(worker, "ready")
+
 
 if __name__ == "__main__":
     # tcp_sessions()
