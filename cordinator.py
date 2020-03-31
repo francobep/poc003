@@ -234,7 +234,7 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 
 
 def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
-    logging.info("Starting balancing Wazuh Agents lbmode =>" + str(lbmode))
+    logging.info("Starting balancing Wazuh Agents lbmode => " + str(lbmode))
     logging.info("dryrun: " + str(dryrun))
     worker_with_conn = []
     total_connections = 0
@@ -295,9 +295,9 @@ def tcp_sessions(sleeptime=0, lbmode=1, dryrun=False):
         worker = worker[0]
         worker_connections = len(connections)
         wait = not dryrun
-        logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
-        logging.info("Analyzing if is needed shutdown sessions...")
         if lbmode == 1:
+            logging.info("Analyzing if is needed shutdown sessions...")
+            logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
             if worker_connections > fixed_workers_conn + 1 or True:
                 logging.info("Go to shutdown sessions...")
                 conn2kill = worker_connections - fixed_workers_conn
