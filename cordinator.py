@@ -324,7 +324,7 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
 
         for (a, b) in itertools.zip_longest(workers_with_conn_a, workers_with_conn):
             for (c, d) in itertools.zip_longest(a[1], b[1]):
-                logging.debug(c)
+                logging.debug(c, d)
                 exit(1)
 
     if wait:
