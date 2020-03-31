@@ -317,7 +317,7 @@ def tcp_sessions(sleeptime=10, lbmode=1, dryrun=False):
         workers_with_conn, total_connections, total_traffic = get_workers_with_traffic(workers)
 
         for (a,b) in itertools.zip_longest(workers_with_conn_a, workers_with_conn):
-            logging.debug(a,b)
+            logging.debug(str(a),str(b))
             exit(1)
 
 
