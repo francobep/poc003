@@ -182,8 +182,7 @@ def get_connections(host):
     connections = []
     logging.info("Getting Traffic from TCP agent connection")
     for line in rdata:
-        i = 0
-        if datalength > i:
+        if datalength > 2:
             line = line.split(' ')
             logging.debug(line)
             src_ip = str(line[2]).replace("src=", "")
@@ -192,7 +191,6 @@ def get_connections(host):
             logging.debug("Getting connection ID " + conn_id)
             traffic = get_traffic(host, conn_id)
             connections.append([conn_id, traffic])
-            i = i + 1
     exit(1)
     logging.debug("Current [connections,traffic] from " + host + ":9999 " + str(connections))
     return connections
