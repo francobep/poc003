@@ -53,16 +53,18 @@ def set_logger(verbosity_level):
     )
     logger = logging.getLogger()
     level = logging.INFO
+
     if verbosity_level == 2:
         level = logging.WARNING
     elif verbosity_level == 3:
         level = logging.DEBUG
-    logger.setLevel(level)
 
+    logger.setLevel(level)
     console = logging.StreamHandler()
     console.setLevel(level)
     formatter = logging.Formatter(log_format, datefmt="%Y-%m-%d %H:%M:%S")
     console.setFormatter(formatter)
+
     if logger.hasHandlers():
         logger.handlers.clear()
     logger.addHandler(console)
@@ -105,6 +107,7 @@ def get_workers_k8s_api():
     logging.info("Getting workers from K8's API")
     config.load_incluster_config()
     v1 = client.CoreV1Api()
+
     try:
         endpoints = v1.list_namespaced_endpoints("wazuh")  # TODO:Get POD NAMESPACE
         workers = []
@@ -134,8 +137,8 @@ def get_workers_wazuh_api():
     auth = requests.auth.HTTPBasicAuth('foo', 'bar')  # TODO Get API Credentials
     requests.packages.urllib3.disable_warnings()
     workers = []
-    # Request
     url = '{0}{1}'.format(base_url, "/cluster/nodes")
+
     try:
         r = requests.get(url, auth=auth, params=None, verify=False)
         response = r.json()
@@ -164,6 +167,7 @@ def get_traffic(host, conn):
     logging.debug("Getting connection traffic " + host + ":9999:" + conn)
     rdata = sendto_socket(host, "show sess " + conn)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
+
     for total in rawtotals:
         if traffic == 0:
             logging.debug("Connection " + host + ":9999:" + conn + " bytes inbound " + str(total))
@@ -188,6 +192,7 @@ def get_connections(host):
     logging.info("Getting Traffic from TCP agent connection")
     hostname = socket.gethostname()
     ipaddr = str(socket.gethostbyname(hostname))
+
     for line in rdata:
         line = line.split(' ')
         if line != ['']:
@@ -244,6 +249,7 @@ def get_workers_with_traffic(workers):
     workers_with_conn = []
     total_connections = 0
     total_traffic = 0
+
     for worker in workers:
         connections = []
         connections_with_traffic = get_connections(worker)
@@ -282,9 +288,9 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
     w_from_k8s = len(get_workers_k8s_api())
     w_from_wazuh = len(workers)
     wait = not dryrun
-
     logging.info("Matching inventory from Wazuh and K8's API...")
     retry = 0
+
     while w_from_k8s != w_from_wazuh:
         logging.warning('Workers does not match, retrying...')
         sleep(5)
@@ -292,6 +298,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
         workers = get_workers_wazuh_api()
         w_from_k8s = len(get_workers_k8s_api())
         w_from_wazuh = len(workers)
+
         if retry > 5:
             logging.error('Workers does not match, exiting...')
             exit(1)
@@ -307,16 +314,18 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
         logging.info("Fixed connections per worker: " + str(fixed_workers_conn))
         logging.info("################################################")
         logging.info("################################################")
-        # Minimum connections
+
         if fixed_workers_conn < 1:
             logging.error('Skipping "no_min_conn"')
             return False
+
         for worker in workers_with_conn:
             connections = worker[1]
             worker = worker[0]
             worker_connections = len(connections)
             logging.info("Analyzing if is needed shutdown sessions in worker " + worker + "...")
             logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
+
             if worker_connections > fixed_workers_conn + 1:
                 logging.info("Go to shutdown sessions...")
                 conn2kill = worker_connections - fixed_workers_conn
@@ -325,6 +334,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 logging.debug("Set HAP in DRAIN mode => " + worker)
                 logging.debug("Set worker " + worker + "in to drain mode")
                 set_server_state(worker, "drain")
+
                 for conn in connections:
                     if conn2kill != i:
                         logging.debug("Shutting down connection =>" + worker + ":" + conn[0])
@@ -360,6 +370,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
         logging.info("Calculating Fixed connections based on total traffic connections divide into total workers...")
         logging.info("################################################")
         logging.info("################################################")
+
         for worker in workers_with_conn:
             fixed_workers_traffic = get_fixed_workers_traffic(total_traffic, total_workers)
             logging.info("Fixed traffic per worker: " + str(fixed_workers_traffic))
@@ -367,11 +378,13 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
             worker = worker[0]
             worker_traffic = 0
             logging.info("Analyzing if is needed shutdown sessions in worker " + worker + "...")
+
             for conn in connections:
                 conn_traffic = conn[1]
                 worker_traffic = worker_traffic + conn_traffic
                 logging.debug("Connection Traffic => " + str(conn_traffic))
                 logging.debug("Calculating Worker traffic => " + str(worker_traffic))
+
                 if worker_traffic > fixed_workers_traffic:
                     logging.info("Worker " + worker + " has " + str(worker_traffic) + " traffic. Is over the limit!")
                     logging.info("Go to shutdown sessions...")
@@ -379,9 +392,12 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                     logging.debug("Set worker " + worker + " in to drain mode")
                     set_server_state(worker, "drain")
                     logging.debug("Shutting down connection => " + worker + ":" + conn[0])
+
                     if not dryrun:
                         shutdown_session(worker, conn[0])
+
             logging.info("Go to next worker...")
+
             if total_workers > 2:
                 logging.debug("Rest worker traffic to total traffic")
                 total_traffic = total_traffic - worker_traffic
