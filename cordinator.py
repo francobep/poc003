@@ -334,14 +334,13 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 d[1] = traffic
 
         total_traffic = total_traffic - total_traffic_a
-        fixed_workers_traffic = get_fixed_workers_traffic(total_traffic, total_workers)
         logging.info("Total Connections: " + str(total_connections))
         logging.info("Total Traffic: " + str(total_traffic))
         logging.info("Total Workers: " + str(total_workers))
         logging.info("Calculating Fixed connections based on total traffic connections divide into total workers...")
-        logging.info("Fixed traffic per worker: " + str(fixed_workers_traffic))
         for worker in workers_with_conn:
             fixed_workers_traffic = get_fixed_workers_traffic(total_traffic, total_workers)
+            logging.info("Fixed traffic per worker: " + str(fixed_workers_traffic))
             connections = worker[1]
             worker = worker[0]
             worker_traffic = 0
