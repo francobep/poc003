@@ -351,8 +351,8 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 total_traffic = total_traffic - worker_traffic
                 logging.debug(conn_traffic)
                 logging.debug(worker_traffic)
-            total_traffic = total_traffic - worker_traffic
-            logging.debug(total_traffic)
+            rest_total_traffic = total_traffic - worker_traffic
+            logging.debug(rest_total_traffic)
             exit(1)
 
     if wait:
