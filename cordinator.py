@@ -282,9 +282,8 @@ def get_stats(workers, title):
     :param workers: list List of Worker's IP
     :param title: string Title
     """
-    logging.info(title)
     workers_with_conn = get_workers_with_traffic(workers)
-
+    logging.info(title)
     for worker_with_con in workers_with_conn:
         check_list = isinstance(worker_with_con, list)
         if check_list:
