@@ -291,10 +291,14 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
     if lbmode == 1:
         workers_with_conn, total_connections, total_traffic = get_workers_with_traffic(workers)
         fixed_workers_conn = round(total_connections / total_workers)
+        logging.info("################################################")
+        logging.info("################################################")
         logging.info("Total Connections: " + str(total_connections))
         logging.info("Total Workers: " + str(total_workers))
         logging.info("Calculating Fixed connections based on total connections divide into total workers...")
         logging.info("Fixed connections per worker: " + str(fixed_workers_conn))
+        logging.info("################################################")
+        logging.info("################################################")
         # Minimum connections
         if fixed_workers_conn < 1:
             logging.error('Skipping "no_min_conn"')
@@ -334,9 +338,13 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 d[1] = traffic
 
         total_traffic = total_traffic - total_traffic_a
+        logging.info("################################################")
+        logging.info("################################################")
         logging.info("Total Connections: " + str(total_connections))
         logging.info("Total Traffic: " + str(total_traffic))
         logging.info("Total Workers: " + str(total_workers))
+        logging.info("################################################")
+        logging.info("################################################")
         logging.info("Calculating Fixed connections based on total traffic connections divide into total workers...")
         for worker in workers_with_conn:
             fixed_workers_traffic = get_fixed_workers_traffic(total_traffic, total_workers)
