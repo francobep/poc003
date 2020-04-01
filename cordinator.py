@@ -347,7 +347,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
             for conn in connections:
                 conn_traffic = conn[1]
                 logging.debug(conn_traffic)
-        exit(1)
+            exit(1)
 
     if wait:
         logging.info("Waiting 60s to renew connections...")
