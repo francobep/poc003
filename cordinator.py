@@ -351,7 +351,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 logging.debug("Connection Traffic => " + str(conn_traffic))
                 logging.debug("Sumarizing Worker traffic => " + str(worker_traffic))
                 if worker_traffic > fixed_workers_traffic:
-                    logging.info("Worker traffic is over the limit")
+                    logging.info("Worker " + worker + " has " + str(worker_traffic) + " traffic. It's over the limit!")
                     logging.info("Go to shutdown sessions...")
                     logging.debug("Set HAP in DRAIN mode => " + worker)
                     logging.debug("Set worker " + worker + " in to drain mode")
