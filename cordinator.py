@@ -341,14 +341,17 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
         logging.info("Calculating Fixed connections based on total traffic connections divide into total workers...")
         logging.info("Fixed traffic per worker: " + str(fixed_workers_traffic))
         for worker in workers_with_conn:
+            fixed_workers_traffic = get_fixed_workers_traffic(total_traffic, total_workers)
             connections = worker[1]
             worker = worker[0]
             worker_traffic = 0
+            logging.info("Analyzing if is needed shutdown sessions...")
             for conn in connections:
                 conn_traffic = conn[1]
                 worker_traffic = worker_traffic + conn_traffic
                 logging.debug("Connection Traffic => " + str(conn_traffic))
                 if worker_traffic > fixed_workers_traffic:
+                    logging.info("Go to shutdown sessions...")
                     logging.debug("Shutting down connection =>" + worker + ":" + conn[0])
                     if not dryrun:
                         shutdown_session(worker, conn[0])
@@ -356,9 +359,8 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
             total_traffic = total_traffic - worker_traffic
             logging.debug("Rest of traffic => " + str(total_traffic))
             workers = len(workers) - 1
-            logging.debug("Rest of Workers => " + str(workers))
-
-            exit(1)
+            total_workers = workers
+            logging.debug("Rest of Workers => " + str(total_workers))
 
     if wait:
         logging.info("Waiting 60s to renew connections...")
