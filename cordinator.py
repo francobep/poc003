@@ -276,6 +276,18 @@ def get_workers_with_traffic(workers):
     return workers_with_conn, total_connections, total_traffic
 
 
+def get_stats(workers):
+    """
+    Set state to a Worker via HAPROXY
+    :param workers: List of Worker's IP
+    """
+    workers_with_conn = get_workers_with_traffic(workers)
+
+    for worker in workers_with_conn:
+        logging.debug(worker)
+        exit(1)
+
+
 def get_fixed_workers_traffic(traffic, workers):
     """
     Divide traffic into workers
@@ -437,4 +449,7 @@ def main():
 
 
 if __name__ == "__main__":
+    workers = get_workers_wazuh_api()
+    get_stats(workers)
+
     main()
