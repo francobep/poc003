@@ -350,8 +350,11 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 worker_traffic = worker_traffic + conn_traffic
                 logging.debug("Connection Traffic => " + str(conn_traffic))
                 if worker_traffic > fixed_workers_traffic:
+                    logging.debug("Set HAP in DRAIN mode => " + worker)
+                    logging.debug("Set worker " + worker + "in to drain mode")
+                    set_server_state(worker, "drain")
                     logging.info("Go to shutdown sessions...")
-                    logging.debug("Shutting down connection =>" + worker + ":" + conn[0])
+                    logging.debug("Shutting down connection => " + worker + ":" + conn[0])
                     if not dryrun:
                         shutdown_session(worker, conn[0])
             logging.debug("Worker traffic => " + str(worker_traffic))
