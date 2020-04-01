@@ -375,7 +375,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 total_workers = total_workers - 1
                 logging.debug("Rest of Workers => " + str(total_workers))
             else:
-                logging.debug("Divide at least into 2 workers, skipping...")
+                logging.debug("Need at least 2 workers, don't recalculate fixed traffic, skipping...")
 
     if wait:
         logging.info("Waiting 60s to renew connections...")
