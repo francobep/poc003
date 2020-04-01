@@ -286,7 +286,8 @@ def get_stats(workers):
 
     for worker_with_con in workers_with_conn:
         for worker in worker_with_con:
-            logging.info("Worker => " + worker[0] + " has " + str(len(worker[1])) + " connections")
+            if worker != ['']:
+                logging.info("Worker => " + worker[0] + " has " + str(len(worker[1])) + " connections")
 
 
 def get_fixed_workers_traffic(traffic, workers):
