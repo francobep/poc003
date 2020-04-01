@@ -453,10 +453,4 @@ def main():
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    set_logger(args.verbosity_level)
-    workers = get_workers_wazuh_api()
-    get_stats(workers)
-
-
     main()
