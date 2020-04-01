@@ -276,12 +276,13 @@ def get_workers_with_traffic(workers):
     return workers_with_conn, total_connections, total_traffic
 
 
-def get_stats(workers):
+def get_stats(workers, title):
     """
     Set state to a Worker via HAPROXY
-    :param workers: List of Worker's IP
+    :param workers: list List of Worker's IP
+    :param title: string Title
     """
-    logging.info("Workers Statistics")
+    logging.info(title)
     workers_with_conn = get_workers_with_traffic(workers)
 
     for worker_with_con in workers_with_conn:
@@ -312,7 +313,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
     logging.info("Starting balancing Wazuh Agents lbmode => " + str(lbmode))
     logging.info("dryrun: " + str(dryrun))
     workers = get_workers_wazuh_api()
-    #Get Initial State
+    # Get Initial State
     get_stats(workers)
     total_workers = len(workers)
     w_from_k8s = len(get_workers_k8s_api())
@@ -439,14 +440,16 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
 
     if wait:
         logging.info("Waiting 10s to renew connections...")
-        sleep(10)
+        sleep(0)
         for worker in workers:
             worker = worker
             set_server_state(worker, "ready")
     else:
         logging.info("Nothing to do, bye...")
-    #Get Final State
-    get_stats(workers)
+    # Get Final State
+    title = "Final Stats"
+    get_stats(workers, title)
+
 
 def main():
     args = parse_args()
