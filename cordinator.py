@@ -284,7 +284,7 @@ def get_stats(workers):
     workers_with_conn = get_workers_with_traffic(workers)
 
     for worker in workers_with_conn:
-        print(str(worker))
+        print(str(workers_with_conn))
         exit(1)
 
 
