@@ -451,7 +451,7 @@ def tcp_sessions(waittime, sleeptime, lbmode=1, dryrun=False):
                 logging.debug("Need at least 2 workers, don't recalculate fixed traffic, skipping...")
 
     if wait:
-        logging.info("Waiting " + str(waittime) + "s to renew connections...")
+        logging.info("Waiting " + str(waittime) + "s to set servers ready again...")
         sleep(waittime)
         for worker in workers:
             worker = worker
