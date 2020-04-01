@@ -283,9 +283,10 @@ def get_stats(workers):
     """
     workers_with_conn = get_workers_with_traffic(workers)
 
-    for worker in workers_with_conn:
-        print(str(workers_with_conn))
-        exit(1)
+    for worker_with_con in workers_with_conn:
+        for worker in worker_with_con:
+            print(str(worker))
+            exit(1)
 
 
 def get_fixed_workers_traffic(traffic, workers):
