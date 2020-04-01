@@ -358,7 +358,11 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                     if not dryrun:
                         shutdown_session(worker, conn[0])
             logging.debug("Worker traffic => " + str(worker_traffic))
-            total_traffic = total_traffic - worker_traffic
+            if total_workers > 2:
+                logging.debug("Rest worker traffic to total traffic")
+                total_traffic = total_traffic - worker_traffic
+            else:
+                logging.debug("Divide at least into 2 workers, skipping...")
             logging.debug("Rest of traffic => " + str(total_traffic))
             total_workers = total_workers - 1
             logging.debug("Rest of Workers => " + str(total_workers))
