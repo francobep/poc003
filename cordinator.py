@@ -100,7 +100,7 @@ def sendto_socket(host, msg):
 def get_workers_k8s_api():
     """
     Get workers nodes from "endpoints" in a service via K8's API.
-    :return workers: List of workers IP
+    :return workers: list List of workers IP
     """
     logging.info("Getting workers from K8's API")
     config.load_incluster_config()
@@ -126,7 +126,7 @@ def get_workers_k8s_api():
 def get_workers_wazuh_api():
     """
     Get workers nodes from Wazuh Manager API.
-    :return workers: List of workers IP
+    :return workers: list List of workers IP
     """
     logging.info("Getting workers from Wazuh API")
     namespace = 'wazuh'  # TODO:Get NAMESPACE POD
@@ -158,6 +158,7 @@ def get_traffic(host, conn):
     Get connection's traffic via HAPROXY
     :param host: string IP of worker
     :param conn: string ID HEX of Connection
+    :return traffic: int Sum of Traffic
     """
     traffic = 0
     logging.debug("Getting connection traffic " + host + ":9999:" + conn)
@@ -177,6 +178,7 @@ def get_connections(host):
     """
     Get connections of a Worker via HAPROXY
     :param host: string IP of worker
+    :return connections: list List of connections
     """
     logging.info("Getting current agents TCP connections from HAP")
     rdata = sendto_socket(host, "show sess")
@@ -235,6 +237,9 @@ def get_workers_with_traffic(workers):
     """
     Set state to a Worker via HAPROXY
     :param workers: List of Worker's IP
+    :return workers_with_conn: list List of tuples [workers,[[connection,traffic]]]
+    :return total_connections: int Sum of all connections
+    :return total_traffic: int Sum of all traffic
     """
     workers_with_conn = []
     total_connections = 0
@@ -252,22 +257,24 @@ def get_workers_with_traffic(workers):
     return workers_with_conn, total_connections, total_traffic
 
 
-'''
-Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
-'''
-
-
 def get_fixed_workers_traffic(traffic, workers):
+    """
+    Divide traffic into workers
+    :param traffic: Sum of traffic from all connections
+    :param workers: List of Worker's IP
+    """
     fixed_workers_traffic = round(traffic / workers)
     return fixed_workers_traffic
 
 
-'''
-Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
-'''
-
-
 def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
+    """
+    Divide traffic into workers
+    :param sleeptime: int Seconds to sleep between A/B moments
+    :param lbmode: int Type of load balance mode.
+    :param dryrun: bool
+
+    """
     logging.info("Starting balancing Wazuh Agents lbmode => " + str(lbmode))
     logging.info("dryrun: " + str(dryrun))
     workers = get_workers_wazuh_api()
@@ -329,6 +336,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
     else:
         # Moment A
         workers_with_conn_a, total_connections_a, total_traffic_a = get_workers_with_traffic(workers)
+        logging.info("Sleeping " + sleeptime + " seconds to take a traffic metric")
         sleep(sleeptime)
         # Moment B
         workers_with_conn, total_connections, total_traffic = get_workers_with_traffic(workers)
@@ -363,7 +371,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 conn_traffic = conn[1]
                 worker_traffic = worker_traffic + conn_traffic
                 logging.debug("Connection Traffic => " + str(conn_traffic))
-                logging.debug("Sumarizing Worker traffic => " + str(worker_traffic))
+                logging.debug("Calculating Worker traffic => " + str(worker_traffic))
                 if worker_traffic > fixed_workers_traffic:
                     logging.info("Worker " + worker + " has " + str(worker_traffic) + " traffic. Is over the limit!")
                     logging.info("Go to shutdown sessions...")
