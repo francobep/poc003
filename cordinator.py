@@ -346,6 +346,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
             worker_traffic = 0
             for conn in connections:
                 conn_traffic = conn[1]
+                logging.debug(conn_traffic)
         exit(1)
 
     if wait:
