@@ -313,8 +313,8 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
     logging.info("Starting balancing Wazuh Agents lbmode => " + str(lbmode))
     logging.info("dryrun: " + str(dryrun))
     workers = get_workers_wazuh_api()
-    # Get Initial State
-    get_stats(workers)
+    title = "Initial Stats"
+    get_stats(workers, title)
     total_workers = len(workers)
     w_from_k8s = len(get_workers_k8s_api())
     w_from_wazuh = len(workers)
