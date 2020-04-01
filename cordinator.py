@@ -285,7 +285,7 @@ def get_stats(workers):
 
     for worker_with_con in workers_with_conn:
         for worker in worker_with_con:
-            print(str(len(worker[1])))
+            logging.debug(len(worker[1]))
             exit(1)
 
 
