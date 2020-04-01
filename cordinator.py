@@ -19,6 +19,7 @@ def parse_args():
                         help="1 => TCP Sessions, 2 => TCP Sessions with Network Load. Default=1",
                         default=1,
                         dest="lbmode")
+
     parser.add_argument("--v",
                         "-v",
                         action="store",
@@ -27,14 +28,26 @@ def parse_args():
                         default=1,
                         choices={1, 2, 3},
                         dest="verbosity_level")
-    parser.add_argument("--force",
-                        action="store_true",
-                        help="Force set max_conn to workers",
-                        dest="force")
+
+    parser.add_argument("-ts",
+                        action="store",
+                        type=int,
+                        help="Seconds to wait to get traffic metrics",
+                        default=30,
+                        dest="sleeptime")
+
+    parser.add_argument("-tw",
+                        action="store",
+                        type=int,
+                        help="Seconds to wait before set servers ready",
+                        default=30,
+                        dest="waittime")
+
     parser.add_argument("--dryrun",
                         action="store_true",
                         help="Dry run mode.",
                         dest="dryrun")
+
     args = parser.parse_args()
     logging.debug(vars(args))
     return args
@@ -301,13 +314,13 @@ def get_fixed_workers_traffic(traffic, workers):
     return fixed_workers_traffic
 
 
-def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
+def tcp_sessions(waittime, sleeptime, lbmode=1, dryrun=False):
     """
-    Divide traffic into workers
+    Balance Connections between workers using HAPROXY as sidecar-pod
+    :param waittime: int Seconds to wait before set servers ready
     :param sleeptime: int Seconds to sleep between A/B moments
     :param lbmode: int Type of load balance mode.
     :param dryrun: bool
-
     """
     logging.info("Starting balancing Wazuh Agents lbmode => " + str(lbmode))
     logging.info("dryrun: " + str(dryrun))
@@ -439,7 +452,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
 
     if wait:
         logging.info("Waiting 10s to renew connections...")
-        sleep(0)
+        sleep(waittime)
         for worker in workers:
             worker = worker
             set_server_state(worker, "ready")
@@ -453,7 +466,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
 def main():
     args = parse_args()
     set_logger(args.verbosity_level)
-    tcp_sessions(lbmode=args.lbmode, dryrun=args.dryrun)
+    tcp_sessions(waittime=args.waittime, sleeptime=args.sleeptime, lbmode=args.lbmode, dryrun=args.dryrun)
 
 
 if __name__ == "__main__":
