@@ -67,6 +67,7 @@ def set_logger(verbosity_level):
 
     if logger.hasHandlers():
         logger.handlers.clear()
+
     logger.addHandler(console)
 
 
@@ -112,13 +113,16 @@ def get_workers_k8s_api():
         endpoints = v1.list_namespaced_endpoints("wazuh")  # TODO:Get POD NAMESPACE
         workers = []
         for endpoint in endpoints.items:
+
             if endpoint.metadata.name == 'wazuh-workers':
                 subsets = endpoint.subsets
                 ips = subsets[0].addresses
+
                 for ip in ips:
                     workerip = ip.ip
                     workers.append(workerip)
                     logging.debug("Found Worker from K8's API => " + str(workerip))
+
         logging.info("Total Workers from K8s API = " + str(len(workers)))
         return workers
     except Exception as e:
@@ -149,9 +153,11 @@ def get_workers_wazuh_api():
         items = response['data']['items']
         for worker in items:
             wazuhtype = worker['type']
+
             if wazuhtype == "worker":
                 workers.append(worker['ip'])
                 logging.debug("Found Worker from Wazuh API = " + str(worker['ip']))
+
         logging.info("Total Workers from Wazuh API: " + str(len(workers)))
         return workers
 
@@ -169,10 +175,12 @@ def get_traffic(host, conn):
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
 
     for total in rawtotals:
+
         if traffic == 0:
             logging.debug("Connection " + host + ":9999:" + conn + " bytes inbound " + str(total))
         else:
             logging.debug("Connection " + host + ":9999:" + conn + " bytes outbound " + str(total))
+
         tbytes = int(total.replace("total=", ""))
         traffic = traffic + tbytes
     return traffic
@@ -195,11 +203,13 @@ def get_connections(host):
 
     for line in rdata:
         line = line.split(' ')
+
         if line != ['']:
             src_con = str(line[2]).replace("src=", "").split(":")
             src_ipaddr = src_con[0]
             logging.debug("ipaddr => " + ipaddr)
             logging.debug("src_ipaddr => " + src_ipaddr)
+
             if ipaddr != src_ipaddr:
                 logging.debug("Source => " + src_ipaddr)
                 conn_id = str(line[0]).replace(":", "")
@@ -209,6 +219,7 @@ def get_connections(host):
                 logging.debug("Current [connections,traffic] from " + host + ":9999 " + str(connections))
             else:
                 logging.debug("Discarding coordinator connection...")
+
     return connections
 
 
@@ -221,7 +232,6 @@ def shutdown_session(host, conn):
     logging.info("Shutting down TCP connection...")
     logging.debug("Shutting down TCP connection =>" + host + ":9999:" + conn)
     sendto_socket(host, "shutdown session " + conn)
-    return True
 
 
 def set_server_state(host, state):
@@ -253,21 +263,24 @@ def get_workers_with_traffic(workers):
     for worker in workers:
         connections = []
         connections_with_traffic = get_connections(worker)
+
         for connection_with_traffic in connections_with_traffic:
             connection = connection_with_traffic[0]
             connection_traffic = connection_with_traffic[1]
             total_traffic = total_traffic + connection_traffic
             connections.append([connection, connection_traffic])
+
         workers_with_conn.append([worker, connections])
         total_connections = total_connections + len(connections)
+
     return workers_with_conn, total_connections, total_traffic
 
 
 def get_fixed_workers_traffic(traffic, workers):
     """
     Divide traffic into workers
-    :param traffic: Sum of traffic from all connections
-    :param workers: List of Worker's IP
+    :param traffic: int Sum of traffic from all connections
+    :param workers: list List of Worker's IP
     """
     fixed_workers_traffic = round(traffic / workers)
     return fixed_workers_traffic
