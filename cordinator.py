@@ -347,7 +347,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
             for conn in connections:
                 conn_traffic = conn[1]
                 worker_traffic = worker_traffic + conn_traffic
-                logging.debug("Connection Traffic => " + conn_traffic)
+                logging.debug("Connection Traffic => " + str(conn_traffic))
                 if worker_traffic > fixed_workers_traffic:
                     logging.debug("Shutting down connection =>" + worker + ":" + conn[0])
                     if not dryrun:
