@@ -41,6 +41,10 @@ def parse_args():
 
 
 def set_logger(verbosity_level):
+    """
+    Set logging
+    :param verbosity_level: int between 1,2,3
+    """
     log_format = "%(asctime)s %(levelname)s: %(message)s"
     logging.basicConfig(
         level=logging.INFO,
@@ -64,12 +68,13 @@ def set_logger(verbosity_level):
     logger.addHandler(console)
 
 
-'''
-Envia un string al socket de la API de HAPROXY
-'''
-
-
 def sendto_socket(host, msg):
+    """
+    Send encoded strings to HAPROXY API Runtime SOCKET
+    :param host: string IP of Worker
+    :param msg: string Message to sent
+    :return data: string Message from SOCKET
+    """
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(3)
@@ -92,12 +97,11 @@ def sendto_socket(host, msg):
         s.close()
 
 
-'''
-retorna IP de endpoints del servicio wazuh-workers
-'''
-
-
 def get_workers_k8s_api():
+    """
+    Get workers nodes from "endpoints" in a service via K8's API.
+    :return workers: List of workers IP
+    """
     logging.info("Getting workers from K8's API")
     config.load_incluster_config()
     v1 = client.CoreV1Api()
@@ -119,12 +123,11 @@ def get_workers_k8s_api():
         return False
 
 
-'''
-Retorna lista de IP de workers del servicio API de Wazuh
-'''
-
-
 def get_workers_wazuh_api():
+    """
+    Get workers nodes from Wazuh Manager API.
+    :return workers: List of workers IP
+    """
     logging.info("Getting workers from Wazuh API")
     namespace = 'wazuh'  # TODO:Get NAMESPACE POD
     base_url = 'https://wazuh-manager-master-0.wazuh-cluster.' + namespace + '.svc.cluster.local:55000'
@@ -150,32 +153,31 @@ def get_workers_wazuh_api():
         return workers
 
 
-'''
-Retorna sumatoria de bytes enviados y recibidos por una sesion TCP
-'''
-
-
-def get_traffic(host, conn_id):
+def get_traffic(host, conn):
+    """
+    Get connection's traffic via HAPROXY
+    :param host: string IP of worker
+    :param conn: string ID HEX of Connection
+    """
     traffic = 0
-    logging.debug("Getting connection traffic " + host + ":9999:" + conn_id)
-    rdata = sendto_socket(host, "show sess " + conn_id)
+    logging.debug("Getting connection traffic " + host + ":9999:" + conn)
+    rdata = sendto_socket(host, "show sess " + conn)
     rawtotals = re.findall(r"(total=\d+)", str(rdata))
     for total in rawtotals:
         if traffic == 0:
-            logging.debug("Connection " + host + ":9999:" + conn_id + " bytes inbound " + str(total))
+            logging.debug("Connection " + host + ":9999:" + conn + " bytes inbound " + str(total))
         else:
-            logging.debug("Connection " + host + ":9999:" + conn_id + " bytes outbound " + str(total))
+            logging.debug("Connection " + host + ":9999:" + conn + " bytes outbound " + str(total))
         tbytes = int(total.replace("total=", ""))
         traffic = traffic + tbytes
     return traffic
 
 
-'''
-Retorna lista de conexiones,trafico de un worker
-'''
-
-
 def get_connections(host):
+    """
+    Get connections of a Worker via HAPROXY
+    :param host: string IP of worker
+    """
     logging.info("Getting current agents TCP connections from HAP")
     rdata = sendto_socket(host, "show sess")
     datalength = len(rdata) - 2
@@ -203,24 +205,24 @@ def get_connections(host):
     return connections
 
 
-'''
-Elimina una sesion pasando ID.
-'''
-
-
-def shutdown_session(host, connection):
+def shutdown_session(host, conn):
+    """
+    Shutdown a specific connection via HAPROXY
+    :param host: string IP of worker
+    :param conn: string ID HEX of Connection
+    """
     logging.info("Shutting down TCP connection...")
-    logging.debug("Shutting down TCP connection =>" + host + ":9999:" + connection)
-    sendto_socket(host, "shutdown session " + connection)
+    logging.debug("Shutting down TCP connection =>" + host + ":9999:" + conn)
+    sendto_socket(host, "shutdown session " + conn)
     return True
 
 
-'''
-Establece el estado de un worker ( via HAPROXY )
-'''
-
-
 def set_server_state(host, state):
+    """
+    Set state to a Worker via HAPROXY
+    :param host: string IP of worker
+    :param state: string States of server. (ready,drain,maint)
+    """
     if state == "ready" or state == "drain" or state == "maint":
         logging.info("Setting server state...")
         logging.debug("Setting server => " + host + " state => " + state)
@@ -229,12 +231,11 @@ def set_server_state(host, state):
         logging.error("State no supported. Exiting...")
 
 
-'''
-Retorna lista de workers, lista de conexiones con traffico
-'''
-
-
 def get_workers_with_traffic(workers):
+    """
+    Set state to a Worker via HAPROXY
+    :param workers: List of Worker's IP
+    """
     workers_with_conn = []
     total_connections = 0
     total_traffic = 0
