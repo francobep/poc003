@@ -284,7 +284,7 @@ def get_stats(workers):
     workers_with_conn = get_workers_with_traffic(workers)
 
     for worker in workers_with_conn:
-        logging.debug(worker)
+        print(str(worker))
         exit(1)
 
 
@@ -451,5 +451,6 @@ def main():
 if __name__ == "__main__":
     workers = get_workers_wazuh_api()
     get_stats(workers)
+
 
     main()
