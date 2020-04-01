@@ -223,7 +223,7 @@ Establece el estado de un worker ( via HAPROXY )
 def set_server_state(host, state):
     if state == "ready" or state == "drain" or state == "maint":
         logging.info("Setting server state...")
-        logging.debug("Setting server => " + host + "state => " + state)
+        logging.debug("Setting server => " + host + " state => " + state)
         sendto_socket(host, "set server l1/srv1 state " + state)
     else:
         logging.error("State no supported. Exiting...")
@@ -351,7 +351,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 logging.debug("Connection Traffic => " + str(conn_traffic))
                 if worker_traffic > fixed_workers_traffic:
                     logging.debug("Set HAP in DRAIN mode => " + worker)
-                    logging.debug("Set worker " + worker + "in to drain mode")
+                    logging.debug("Set worker " + worker + " in to drain mode")
                     set_server_state(worker, "drain")
                     logging.info("Go to shutdown sessions...")
                     logging.debug("Shutting down connection => " + worker + ":" + conn[0])
