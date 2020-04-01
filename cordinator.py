@@ -392,8 +392,11 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
         logging.info("Nothing to do, bye...")
 
 
-if __name__ == "__main__":
-    # tcp_sessions()
+def main():
     args = parse_args()
     set_logger(args.verbosity_level)
     tcp_sessions(lbmode=args.lbmode, dryrun=args.dryrun)
+
+
+if __name__ == "__main__":
+    main()
