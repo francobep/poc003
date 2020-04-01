@@ -334,8 +334,13 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
 
         for (a, b) in itertools.zip_longest(workers_with_conn_a, workers_with_conn):
             for (c, d) in itertools.zip_longest(a[1], b[1]):
-                traffic = d[1] - c[1]
-                d[1] = traffic
+                try:
+                    traffic = d[1] - c[1]
+                except requests.exceptions as e:
+                    logging.error(e)
+                    return False
+                else:
+                    d[1] = traffic
 
         total_traffic = total_traffic - total_traffic_a
         logging.info("################################################")
