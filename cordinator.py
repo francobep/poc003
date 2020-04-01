@@ -65,7 +65,7 @@ def set_logger(verbosity_level):
 
 
 '''
-send socket
+Envia un string al socket de la API de HAPROXY
 '''
 
 
@@ -256,6 +256,16 @@ Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
 '''
 
 
+def get_fixed_workers_traffic(traffic, workers):
+    fixed_workers_traffic = round(traffic / workers)
+    return fixed_workers_traffic
+
+
+'''
+Balanceo teniendo en cuenta la cantidad de sesiones TCP ( agentes ) / Workers"
+'''
+
+
 def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
     logging.info("Starting balancing Wazuh Agents lbmode => " + str(lbmode))
     logging.info("dryrun: " + str(dryrun))
@@ -324,11 +334,18 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                 d[1] = traffic
 
         total_traffic = total_traffic - total_traffic_a
-        fixed_workers_traffic = round(total_traffic / total_workers)
+        fixed_workers_traffic = get_fixed_workers_traffic(total_traffic, workers)
         logging.info("Total Traffic: " + str(total_traffic))
         logging.info("Total Workers: " + str(total_workers))
         logging.info("Calculating Fixed connections based on total traffic connections divide into total workers...")
         logging.info("Fixed traffic per worker: " + str(fixed_workers_traffic))
+        for worker in workers_with_conn:
+            connections = worker[1]
+            worker = worker[0]
+            worker_connections = len(connections)
+            worker_traffic = 0
+            for conn in connections:
+                conn_traffic = conn[1]
         exit(1)
 
     if wait:
