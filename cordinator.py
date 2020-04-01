@@ -352,9 +352,9 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
                     logging.debug("Shutting down connection =>" + worker + ":" + conn[0])
                     if not dryrun:
                         shutdown_session(worker, conn[0])
-            logging.debug("Worker traffic => " + worker_traffic)
+            logging.debug("Worker traffic => " + str(worker_traffic))
             total_traffic = total_traffic - worker_traffic
-            logging.debug("Rest of traffic => " + total_traffic)
+            logging.debug("Rest of traffic => " + str(total_traffic))
             workers = len(workers) - 1
             logging.debug("Rest of Workers => " + str(workers))
 
