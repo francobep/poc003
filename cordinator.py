@@ -305,7 +305,7 @@ def tcp_sessions(sleeptime=3, lbmode=1, dryrun=False):
             worker_connections = len(connections)
             logging.info("Analyzing if is needed shutdown sessions...")
             logging.debug("Worker => " + worker + " has " + str(worker_connections) + " sessions")
-            if worker_connections > fixed_workers_conn + 1 or True:
+            if worker_connections > fixed_workers_conn + 1:
                 logging.info("Go to shutdown sessions...")
                 conn2kill = worker_connections - fixed_workers_conn
                 logging.debug("Sessions to kill => " + str(conn2kill))
