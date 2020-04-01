@@ -288,7 +288,7 @@ def get_stats(workers):
         check_list = isinstance(worker_with_con, list)
         if check_list:
             for worker in worker_with_con:
-            logging.info("Worker => " + worker[0] + " has " + str(len(worker[1])) + " connections")
+                logging.info("Worker => " + worker[0] + " has " + str(len(worker[1])) + " connections")
 
 
 def get_fixed_workers_traffic(traffic, workers):
